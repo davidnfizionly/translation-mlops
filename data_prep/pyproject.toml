@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "translation-data-prep"
+version = "0.1.0"
+description = "Cleaning, split and leakage check for the English-Nuer-Dinka corpus (standard library only)"
+requires-python = ">=3.9"
+
+[tool.setuptools]
+py-modules = ["corpus", "leakage_check"]

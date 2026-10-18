@@ -1,0 +1,118 @@
+Dataset facts - 2026-10-18 (UTC)
+
+Dataset: English-Nuer-Dinka Parallel Corpus, by Tajnaam
+Repository: huggingface.co/datasets/dayomtechnologies/english-nuer-dinka-parallel-corpus
+(the Tajnaam/english-nuer-dinka-parallel-corpus URL redirects there, HTTP 307)
+Revision: 28db28e6b554975aad147c85655ddd82a4cb4ba4 (pinned in data_prep/download.py)
+File: nuer_dinka_translations_paired.json, 230,601,831 bytes
+SHA-256: 9149b5a5e9ac5f801d4d4c4034a7b32c33cc7d978360ca5ca129f4150ffb7ed2
+Access: gated (conditions accepted with a Hugging Face account)
+
+License excerpt from the dataset card:
+  "This dataset is released under the Creative Commons Attribution-NonCommercial
+   4.0 International (CC BY-NC 4.0) license."
+  "Commercial use requires prior written permission from the dataset author."
+  Not intended for: commercial AI products, commercial translation services,
+  paid APIs, proprietary language models, SaaS products.
+The card states no pair count, no fields, no splits and no provenance.
+
+Command: python data_prep/inspect_dataset.py
+------------------------------------------------------------------------
+Input: data/raw/nuer_dinka_translations_paired.json
+Top-level type: list, rows: 499880
+Key sets: ('din', 'english', 'nuer') x499880
+Value types: din:str x499880; english:str x499880; nuer:str x499880
+
+Missing or empty values (after strip):
+  english: missing 0, empty 0
+  nuer: missing 0, empty 0
+  din: missing 0, empty 0
+Rows with all three fields non-empty: 499880
+
+Duplicates (normalised: NFC, casefold, punctuation removed, spaces collapsed):
+  distinct triples: 499880, duplicate triple rows: 0
+  english: distinct 499876, rows sharing a value with another row: 8
+  nuer: distinct 499851, rows sharing a value with another row: 57
+  din: distinct 499648, rows sharing a value with another row: 367
+  pair english-nuer: distinct 499880, duplicate pair rows 0
+  pair english-din: distinct 499880, duplicate pair rows 0
+  English sentences with more than one distinct Dinka translation: 4
+
+Lengths in words (p1 / p50 / p99 / max):
+  english: 6 / 17 / 50 / 430  mean 19.3
+  nuer: 6 / 22 / 65 / 390  mean 24.7
+  din: 6 / 21 / 63 / 462  mean 23.9
+  char length ratio nuer/english: p1 0.73, p50 1.10, p99 1.61, outside 0.5-2.5: 249
+  char length ratio din/english: p1 0.60, p50 0.96, p99 1.46, outside 0.5-2.5: 1806
+
+Translation quality signals:
+  nuer: identical to English 0, degenerate repetition (trigram x3+) 6688
+  din: identical to English 0, degenerate repetition (trigram x3+) 36579
+  english: degenerate repetition 623 (baseline for the source side)
+  rows with numbers in English: 212652; numbers copied exactly: nuer 96.0%, din 95.0%
+  Nuer identical to Dinka: 0
+
+Characters outside Latin and common punctuation (top 15 per language):
+  nuer: ɛ(U+025B) x3675699 ɔ(U+0254) x1299394 ɣ(U+0263) x114113 ​(U+200B) x3540 ṉ(U+1E49) x1
+  din: ɔ(U+0254) x1280345 ɛ(U+025B) x996400 ɣ(U+0263) x96915 ​(U+200B) x3962 �(U+FFFD) x164 ε(U+03B5) x4 ẗ(U+1E97) x2 Ε(U+0395) x2
+
+Random sample (seed 13), 5 rows:
+  english Pail Shop Corners is a hamlet located at the corner of Hoke Road, Goose Street, and CR-26 north of Fly Creek in the Town of Otsego, in Otsego County, New York, United States.
+  nuer    Pail Shop Corners ɛ dhɔr mi̱ tɔt mi̱ tä gekä dup Hoke, Goose I̱thti̱ri̱t, kɛnɛ CR-26 nhiam Fly Creek rɛy rɛ̈ɛ̈k kä Otsego, rɛy wec Otsego, kä New York, kä United States.
+  din     Pail Ɣɔc ë Ɣön ë Löŋ ë Ɣön ë Löŋ ë Ɣön ë Löŋ ë Ɣön ë Löŋ ë Ɣön ë Löŋ ë Ɣön ë Löŋ, në Ɣön ë Löŋ ë Ɣön ë Löŋ, në Ɣön ë Löŋ, në Ɣön ë Löŋ, në Amerïka.
+
+  english In the fifth season it was the same premise, but this time centered on five adult friends, three female and two male.
+  nuer    Rɛy thi̱i̱thɔnä in dhie̱e̱cdiɛn cuɛ ŋar ɛ la mi̱ cäät, duŋdɛ ɣöö ɛn gua̱a̱th ɛmɛ cuɛ ruac kɛ kui̱ mäthni̱ da̱ŋ dhie̱e̱c ti̱ di̱t, män da̱ŋ diɔ̱k kɛnɛ wutni̱ da̱ŋ rɛw.
+  din     Në run ke dhiëc yiic ee kë töŋ cï lueel, ku ye thaar kën acï tɔ̈u në mäthdït kaa dhiëc, diäär kaa diäk ku röör kaa rou.
+
+  english Lotus Kamal (born as Abu Hena Mohammed Mustafa Kamal on 15 June 1947) is a Bangladeshi politician, cricket official, and businessman.
+  nuer    Lotus Kamal (dap kɛ jɛ ɛ la Abu Ɣena Moɣamɛd Muthtɛpa Kamal kɛ cäŋ kä 15 kä Pay Bäkɛl 1947) ɛ rami̱ tä kä Bangladesh mi̱ lät kä thiathɛni̱, ɛ rami̱ lät kä cricket, kä ɛ rami̱ laa lät nyin thuɔ̱ɔ̱k.
+  din     Lotus Kamal (Dhiëth ke cɔl Abu Hena Mohammed Mustafa Kamal në ruön de 15 Pɛnëdhetem run de 1947) ee raan de thiɛɛth de Bangladesh, raan de krïket, ku yee raan de tajiir.
+
+  english AS Nancy-Lorraine, before moving to Singapore-based club Home United for the 2015 S.League season.
+  nuer    AS Nancy-Lorraine, ɛ ŋot /ke̱nɛ ni̱ wɔ̱ kä Singapore mi̱ tä kä Home United kɛ ruɔ̱n 2015.
+  din     AS Nancy-Lorraine, ke kën lɔ në akutnhom de Ɣöm United yic në runë 2015.
+
+  english The CD comes with a 24-page booklet of photographs packaged in a cardboard slipcase.
+  nuer    Kä CD ɛmɔ bëë kɛ bok mi̱ tɔt mi̱ tekɛ pecni̱ ti̱ 24 ti̱ ca thurɛni̱ la̱th rɛy thaak mi̱ ca gɔ̱r kɛɛ kartuc.
+  din     CD ee bɛ̈n ke nɔŋ athör ë thura ë 24 ë thäät cï keek tääu në thäät ë thäät yiic.
+
+------------------------------------------------------------------------
+
+Dinka variety and language identification
+Command: python data_prep/language_id_check.py (GlotLID v3, run in python:3.11-slim)
+GlotLID v3 separates Southwestern (dik_Latn), Northeastern (dip_Latn) and
+Southeastern (dks_Latn) Dinka. Random sample of 2000 rows, seed 13.
+  din field:     dik_Latn 98.8%, dks_Latn 0.1%, dip_Latn 0%; top-1 prob >= 0.9: 97.4%
+                 mean probability mass: dik 0.983, dks 0.003, dip 0.000
+  nuer field:    nus_Latn 99.9%; top-1 prob >= 0.9: 99.9%
+  english field: eng_Latn 99.0%
+Reading: the Dinka text is classified as Southwestern Dinka, the variety
+NLLB-200 covers as dik_Latn. This is a classifier result, not a check by a
+speaker. The card tags the field "din" (the Dinka macrolanguage code).
+
+Origin of the texts (assessment, not proof)
+- English side: encyclopedic sentences consistent with Wikipedia
+  ("is a species of" 8,705 rows; "(born " 22,230 rows; village/town/hamlet
+  definitions 5,212 rows).
+- All 499,880 English sentences have both a Nuer and a Dinka version, with
+  no empty field and no copy of the English: a three-way human translation
+  of this size for two low-resource languages is unlikely.
+- Degenerate repetition (a word trigram 3 or more times in one sentence):
+  Dinka 36,579 rows (7.3%), Nuer 6,688 (1.3%), English source 623 (0.1%).
+  This looping pattern is typical of neural machine translation.
+- Loops replace content: in the random sample, the Dinka output for a
+  sentence about "Pail Shop Corners ... Otsego County, New York" repeats one
+  short phrase many times and drops most of the place names.
+- Numbers copied exactly: Nuer 96.0%, Dinka 95.0% of 212,652 rows with numbers.
+- The same publisher's health dataset (MIT) states on its card that its Nuer
+  and Dinka text was produced with Google Translate.
+Conclusion: the Nuer and Dinka sides are very probably machine translated
+from English (high confidence, not confirmed by the author). The card does
+not say how the translations were produced.
+
+Examples (dataset by Tajnaam, CC BY-NC 4.0)
+  EN:  In the competition Volyn passed the 1988 Football Champion of Ukrainian SSR, FC Bukovyna Chernivtsi.
+  DIN: Në mëën yic, ke Volyn acï thök në 1988 në thök de thök de thök de thök de thök de thök.
+  EN:  It is a full QWERTY device with a dedicated physical Facebook button, similar to the HTC ChaCha.
+  DIN: Ee kën ë QWERTY ëbɛ̈n ë thäät ë thäät ë thäät ë thäät ë thäät, thöŋ ke HTC ChaCha.

@@ -1,0 +1,28 @@
+Leakage check - 2026-10-18 (UTC)
+Command: python data_prep/leakage_check.py   (local run on data/processed, 627 s)
+Splits from data_prep/prepare.py, seed 13 (see proof/04-cleaning.txt).
+------------------------------------------------------------------------
+Split sizes: train 453106, valid 1939, test 1966
+Row ids shared between splits: 0
+test vs train:
+  exact_english                    0
+  exact_nuer                       0
+  exact_din                        0
+  digit_masked_english             0
+  near_duplicate_jaccard_ge_0.8    0
+  max_jaccard                      0.789
+valid vs train:
+  exact_english                    0
+  exact_nuer                       0
+  exact_din                        0
+  digit_masked_english             0
+  near_duplicate_jaccard_ge_0.8    0
+  max_jaccard                      0.793
+test vs valid:
+  exact_english                    0
+  exact_nuer                       0
+  exact_din                        0
+  digit_masked_english             0
+  near_duplicate_jaccard_ge_0.8    0
+  max_jaccard                      0.778
+RESULT: PASS (0 leaks)

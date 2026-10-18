@@ -1,0 +1,23 @@
+Cleaning and split - 2026-10-18 (UTC)
+Dataset: English-Nuer-Dinka Parallel Corpus by Tajnaam (CC BY-NC 4.0), revision 28db28e6
+Command: python data_prep/prepare.py   (local run, 682 s, 1.5 GB peak memory)
+Rules are defined in data_prep/corpus.py and documented in docs/DATA_CLEANING.md.
+------------------------------------------------------------------------
+Input rows: 499880
+Rows modified by normalisation (NFC, zero-width removed, spaces): 3250
+Rows removed per rule (first matching rule, in order):
+  replacement_char        31
+  empty_field              0
+  english_length         113
+  target_loop          40820
+  length_ratio          1733
+  duplicate_english        3
+  duplicate_target        74
+  total                42774
+Rows kept: 457106
+
+Split seed 13, 452743 groups (English key with digits masked)
+Near duplicates of training rows removed (trigram Jaccard >= 0.8): test 34, valid 61
+  train  453106 rows  sha256 c78d233b71e24b37aa03e09e99f00cb7ef39f722b64362d6d5d0970f5eb6183d
+  valid    1939 rows  sha256 fd47829daaa248e01401270f929816944689dfd35c594f4c1e9af3c765376158
+  test     1966 rows  sha256 3359bffa3d984e7e60cc17a52715e7495bf545986655fa9998e747c570655c5b

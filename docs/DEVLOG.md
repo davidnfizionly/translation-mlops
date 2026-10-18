@@ -14,3 +14,20 @@ Real problems, root causes and fixes, written as they occur.
 - What happened: the first test run of the pre-push hook let through an access key, an ARN with an account ID, a foreign e-mail address, an attribution trailer, a Hugging Face token and an endpoint URL. Only the path and author checks blocked.
 - Root cause: the scan function was called at the end of a pipeline (`git show ... | scan_text`), so it ran in a subshell and its `fail=1` was lost when the subshell exited.
 - Fix: feed the function with process substitution (`scan_text label < <(git show ...)`) so it runs in the hook's own shell. All 15 test cases then behaved as expected (`proof/01-pre-push-hook-test.txt`).
+
+## 2026-10-18 - No venv module for Python 3.14
+
+- What happened: `python3 -m venv .venv` failed: ensurepip is not available.
+- Root cause: Ubuntu ships the venv module in a separate package, python3.14-venv, which was not installed.
+- Fix: the package was installed with sudo, then the project virtual environment was created. Tools that need older Python wheels (fastText for GlotLID) run in a python:3.11-slim container instead.
+
+## 2026-10-18 - Hugging Face token rejected, then dataset file refused
+
+- What happened: the stored token was reported invalid; after it was fixed, the dataset card downloaded but the data file returned 403 "not in the authorized list".
+- Root cause: the token had been pasted four times into the token file (148 characters instead of 37), found by checking the length and the repetition without printing the token. The 403 came from the dataset access not yet being granted to the account.
+- Fix: the token file was rewritten with one paste (length checked), and access to the gated dataset was granted on the dataset page. The download then succeeded.
+
+## 2026-10-18 - The corpus is very probably machine translated
+
+- What happened: inspection showed looping output in 7.3% of the Dinka rows (1.3% Nuer, 0.1% English), encyclopedic English source sentences, and full three-way coverage of 499,880 rows. The card does not state how the translations were made; the same publisher's health dataset states that it used Google Translate.
+- Consequence: fine-tuning on this corpus teaches the model to imitate the system that produced it, and BLEU and chrF on a held-out split measure agreement with that system, not with human translation. This is stated with every metric.

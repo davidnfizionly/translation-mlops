@@ -1,0 +1,18 @@
+Personal data scan - 2026-10-18 (UTC)
+Command: python data_prep/inspect_dataset.py (pattern section), all 499,880 rows,
+all three fields. Every e-mail and @handle hit, and a sample of the URL
+and phone-like hits (English side), were read.
+
+Pattern            Rows  Finding
+e-mail                1  documentation example address (example.com domain) in a sentence about address munging
+URL                  40  websites of publications and organisations (newspapers, geocaching.com); none personal in the sample read
+phone-like           80  dates (2008-04-24, 13.04.2017), sports scores (86-76), album and model numbers; no phone number in the sample read
+@handle               6  TV show title "@midnight" and a public contest winner's stage name
+honorific + name   1637  public figures in encyclopedic sentences
+capitalised names 267447 English rows with person, place or title names (encyclopedic text)
+
+Result: no private contact data found (no real e-mail address; no phone
+number in the hits read).
+The text names public figures, as encyclopedic text does. No row is removed
+for personal data; the URL rows are kept. The dataset is not stored in the
+repository.

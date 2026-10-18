@@ -54,3 +54,7 @@ Thumbs.db
 *.swp
 .vscode/
 .idea/
+
+# Build output
+build/
+*.egg-info/
