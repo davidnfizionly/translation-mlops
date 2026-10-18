@@ -1,0 +1,14 @@
+Glue job run - 2026-10-18 (UTC)
+Job: translation-mlops-data-prep, Python shell 3.9, 1 DPU, library-set analytics, timeout 90 min
+Started 19:42:09Z, completed 19:50:34Z, state SUCCEEDED, ExecutionTime 499 s
+Estimated cost: 1 DPU x 499/3600 h x 0.44 USD/DPU-hour = 0.061 USD (estimate)
+
+Outputs compared with the local run (data_prep/prepare.py), S3 ETag vs local MD5:
+  train: 2b5db9105f2b5d152d58cdf1136f8e5d identical
+  valid: 412329f25fd51b0949ebf336a01c3c5e identical
+  test: 7e6b129778e5a2794bb1494285001d1d identical
+
+reports/stats.json written by the job:
+  removed per rule: {'replacement_char': 31, 'empty_field': 0, 'english_length': 113, 'target_loop': 40820, 'length_ratio': 1733, 'duplicate_english': 3, 'duplicate_target': 74}
+  kept 457106 | sizes {'test': 1966, 'valid': 1939, 'train': 453106} | near duplicates removed {'test': 34, 'valid': 61}
+  leakage check: leaks_total 0 | max Jaccard {'test_vs_train': 0.789, 'valid_vs_train': 0.793, 'test_vs_valid': 0.778}

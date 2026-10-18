@@ -1,0 +1,35 @@
+Athena data quality checks - 2026-10-18 (UTC)
+Command: python scripts/athena_quality_checks.py   (workgroup translation-mlops, table translation_mlops.pairs)
+Queries: infra/data/queries/*.sql (created as Athena named queries by Terraform).
+Estimated cost: 5 USD per TB scanned, minimum 10 MB per query.
+------------------------------------------------------------------------
+== 01_split_counts  state SUCCEEDED  scanned 203.8 MB  est. cost 0.00102 USD
+   split | rows | distinct_row_ids
+   test | 1966 | 1966
+   train | 453106 | 453106
+   valid | 1939 | 1939
+== 02_null_or_empty  state SUCCEEDED  scanned 203.8 MB  est. cost 0.00102 USD
+   split | english_empty | nuer_empty | din_empty
+   test | 0 | 0 | 0
+   train | 0 | 0 | 0
+   valid | 0 | 0 | 0
+== 03_cross_split_duplicates  state SUCCEEDED  scanned 611.3 MB  est. cost 0.00306 USD
+   field | shared_sentences
+   din | 0
+   english | 0
+   nuer | 0
+== 04_length_stats  state SUCCEEDED  scanned 203.8 MB  est. cost 0.00102 USD
+   split | en_words_p50 | en_words_max | din_words_p50 | nuer_words_p50 | din_ratio_min | din_ratio_max | nuer_ratio_min | nuer_ratio_max
+   test | 17 | 72 | 20 | 21 | 0.5 | 1.71 | 0.56 | 1.86
+   train | 17 | 100 | 21 | 22 | 0.5 | 2.5 | 0.5 | 2.46
+   valid | 17 | 69 | 21 | 22 | 0.53 | 2.2 | 0.58 | 2.04
+== 05_loop_check  state SUCCEEDED  scanned 203.8 MB  est. cost 0.00102 USD
+   split | din_loops | nuer_loops
+   test | 0 | 0
+   train | 29 | 1
+   valid | 0 | 0
+
+Total billed bytes 1426.5 MB, estimated cost 0.00713 USD
+------------------------------------------------------------------------
+Note on 05_loop_check: the 30 training rows with a loop are rows whose English
+repeats too (lists, repeated names); the target_loop rule keeps them on purpose.
