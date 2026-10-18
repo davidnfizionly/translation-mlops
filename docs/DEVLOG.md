@@ -31,3 +31,9 @@ Real problems, root causes and fixes, written as they occur.
 
 - What happened: inspection showed looping output in 7.3% of the Dinka rows (1.3% Nuer, 0.1% English), encyclopedic English source sentences, and full three-way coverage of 499,880 rows. The card does not state how the translations were made; the same publisher's health dataset states that it used Google Translate.
 - Consequence: fine-tuning on this corpus teaches the model to imitate the system that produced it, and BLEU and chrF on a held-out split measure agreement with that system, not with human translation. This is stated with every metric.
+
+## 2026-10-18 - .gitignore hid the data stack
+
+- What happened: the commit of the data stage left out `infra/data/` (Terraform and Athena queries).
+- Root cause: the `.gitignore` rule `data/` (meant for the downloaded dataset) matches a directory named `data` at any depth, including `infra/data/`.
+- Fix: the dataset rules are anchored to the repository root (`/data/`, `/models/`, ...). `git check-ignore` confirms that `data/raw/` stays ignored and `infra/data/*.tf` is tracked.
