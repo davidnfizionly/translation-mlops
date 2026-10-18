@@ -1,0 +1,23 @@
+Pre-push hook test - 2026-10-18 (UTC)
+Throwaway repository with a local bare remote. The hook is the local
+.git/hooks/pre-push (not committed). Account ID masked as <acct>.
+
+Expected  Result  Case
+pass      pass    clean commit (README, infra/data/main.tf)
+block     block   AWS access key ID (AWS documentation example key)
+block     block   ARN with account ID (arn:aws:iam::<acct>:role/x)
+block     block   account ID in account context (account_id = <acct>)
+block     block   e-mail address other than the GitHub noreply address
+block     block   attribution trailer in the commit message
+block     block   assistant name in file content
+block     block   terraform.tfstate file
+block     block   .tfvars file
+block     block   .safetensors weights file
+block     block   Hugging Face token pattern
+block     block   private key header
+block     block   SageMaker runtime endpoint URL
+pass      pass    NLLB-200, Tajnaam, CC BY-NC 4.0, sacreBLEU, AWS managed policy ARN, infra/data/
+block     block   commit authored with a non-noreply e-mail
+
+First run: content checks did not block (see docs/DEVLOG.md, subshell bug).
+After the fix: 15 of 15 cases behave as expected.

@@ -1,0 +1,56 @@
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+*.tfplan
+tfplan
+backend.hcl
+crash.log
+
+# Secrets and local environment
+.env
+.env.*
+*.pem
+*.key
+kubeconfig
+.aws/
+
+# Dataset files and model weights (download script only, never committed)
+data/
+datasets/
+*.parquet
+*.arrow
+*.jsonl
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.gguf
+*.h5
+*.tar.gz
+model/
+models/
+checkpoints/
+outputs/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# Node
+node_modules/
+dist/
+
+# OS and editors
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
