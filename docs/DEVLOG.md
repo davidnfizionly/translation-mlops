@@ -37,3 +37,21 @@ Real problems, root causes and fixes, written as they occur.
 - What happened: the commit of the data stage left out `infra/data/` (Terraform and Athena queries).
 - Root cause: the `.gitignore` rule `data/` (meant for the downloaded dataset) matches a directory named `data` at any depth, including `infra/data/`.
 - Fix: the dataset rules are anchored to the repository root (`/data/`, `/models/`, ...). `git check-ignore` confirms that `data/raw/` stays ignored and `infra/data/*.tf` is tracked.
+
+## 2026-10-18 - No space left on device while installing the SageMaker SDK
+
+- What happened: `pip install` failed with "No space left on device" on a disk with 928 GB free.
+- Root cause: `/tmp` is a 3.9 GB tmpfs (memory) in this WSL setup; a 1.6 GB language-identification model left in a temporary folder filled it.
+- Fix: the model was deleted after use; large downloads now go to a directory on disk.
+
+## 2026-10-18 - SageMaker SDK install did not resolve
+
+- What happened: `pip install sagemaker` ran for more than 10 minutes on Python 3.14 and again in a Python 3.12 container (2.4 GB downloaded) without finishing.
+- Root cause: the unpinned install resolves the 3.x line and backtracks through many dependency versions.
+- Fix: a tooling image (`pipelines/Dockerfile`) pins `sagemaker==2.257.7`, the last 2.x release; it installs in about a minute. The 2.x line prints a deprecation warning; the pin is recorded in docs/DECISIONS.md.
+
+## 2026-10-18 - Commands passed to the training image were mangled
+
+- What happened: `docker run <training image> sh -c "pip install ...; pytest"` printed the pip usage text and then "No module named pytest".
+- Root cause: the image entrypoint re-wraps the command, so the `sh -c` string was not passed as one argument.
+- Fix: `--entrypoint bash` with `-c`. The 8 training and evaluation tests then passed in the image (torch 2.8.0, transformers 4.56.2).

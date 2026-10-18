@@ -1,0 +1,111 @@
+Base model check on CPU - 2026-10-18 (UTC), local, no AWS cost
+Model: facebook/nllb-200-distilled-600M, revision f8d333a0 (CC BY-NC 4.0), float32 on CPU
+Command: python evaluation/run_eval.py --model facebook/nllb-200-distilled-600M --label base-cpu-check --limit 10 (training image, CPU)
+Test rows: first 10 of the held-out test split (1,966 rows). Decoding: beam 4, max 200 new tokens.
+Dataset: English-Nuer-Dinka Parallel Corpus by Tajnaam (CC BY-NC 4.0). References very probably machine generated.
+Scores on 10 sentences are a sanity check only, not a result.
+------------------------------------------------------------------------
+eng_Latn-dik_Latn: BLEU 8.76 chrF 28.62 (10 sentences, 764.7 s on CPU)
+eng_Latn-nus_Latn: BLEU 18.23 chrF 44.91 (10 sentences, 204.0 s on CPU)
+BLEU signature: nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1
+chrF signature: nrefs:1|case:mixed|eff:yes|nc:6|nw:0|space:no|version:2.5.1
+
+[eng_Latn-dik_Latn] row 161950
+  EN : Acharya Jayasena has written a commentary on Pravachanasara titled Tatparyavritti (i.e. the Purport).
+  REF: Acharya Jayasena acï wël gɔ̈t në biäk de Pravachanasara cɔl Tatparyavritti (cïmën de Luɔɔi de Luɔɔi).
+  HYP: Acharya Jayasena acï wɛ̈t cï gɔ̈t në Pravachanasara cɔl Tatparyavritti (cïmën de Purport) gɔ̈t.
+
+[eng_Latn-dik_Latn] row 184758
+  EN : He also wrote a satirical novel dealing with the follies of academia and the peculiarities of Canadian and American identities; titled Lincoln's Briefs, it has been published by Canadian Scholars' Press.
+  REF: Acï athör gɔ̈t ëyadɛ̈ ye jam në käjuëc ke puɔ̈ɔ̈c ku jɔl ya käjuëc ke ciɛɛŋ de kɔc ke Canada ku jɔl ya kɔc ke America; gɔ̈t në rin ke Lincoln, acï gɔ̈t në kɔc cï puɔ̈c ke Canada.
+  HYP: Acï bɛ̈n gɔ̈t athöör cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke Canada Scholars's Press.
+
+[eng_Latn-dik_Latn] row 465442
+  EN : Individuals who score highly on a measure such as the Consideration of Future Consequences Scale typically focus on the future implications of their behavior, whereas those low on CFC typically focus more on their immediate needs and concerns.
+  REF: Kɔc ye kä juëc yök në thëm cït mɛn de Thëm de Kä bï röt looi në akälciɛ̈ɛ̈n aye nyïn tïït në kä bï röt looi në aciëëk ken yiic në akälciɛ̈ɛ̈n, ku kɔc nɔŋ CFC lik aye nyïn tïït në kä kɔɔrkë keek ku kä yekë keek diɛɛr.
+  HYP: Kɔc cï käŋ kuanycök apɛi në kë ye nyuɔɔth në kë ye kek ya tak në kë bï kek ya looi në lɔ̈ɔ̈m, aye kek ya tääu në kë bï kek ya looi në lɔ̈ɔ̈m, ku kɔc cï CFC piny aye kek ya tääu në kë ye kek wïc ku käk ye kek ye tak thïn.
+
+[eng_Latn-dik_Latn] row 141443
+  EN : In 1979 they created the Fairlight CMI, one of the earliest music workstation with digital audio sampler, quickly used by artists such as Peter Gabriel, Kate Bush, and Jean Michel Jarre.
+  REF: Në run de 1979 acïk Fairlight CMI looi, töŋ de ɣän thɛɛr ke luɔi de diɛt keke kä ye röl nyuɔɔth në aliiric, cï lac luɔ̈ɔ̈i në kɔc ket cït mɛn de Peter Gabriel, Kate Bush, ku Jean Michel Jarre.
+  HYP: Në ruöön de 1979 ke kek acï Fairlight CMI cak, ee töŋ de kɔc tueŋ ke jam thuɔɔu kek digital audio sampler, cï lac ya luui në kɔc cï puɔ̈ɔ̈c cïmën Peter Gabriel, Kate Bush, ku Jean Michel Jarre.
+
+[eng_Latn-dik_Latn] row 186207
+  EN : These components include: Gait Straight leg raise Waddell's signs Schober's testEvidence from the back examination indicating possible spinal damage may prompt a rectal examination to identify intact tone.
+  REF: Käk anɔŋiic: Cath Cök thöŋ jat nhial Kä ye nyuɔɔth ke Waddell Thëm de SchoberKë ye nyuɔɔth në thëm de nhom ye nyuɔɔth lɔnadɛ̈ ke thëm de kɔ̈u alëu bï thëm de rectal looi bï röl tɔ̈u thïn yök.
+  HYP: Käke yiic aye: Gait Straight leg raise Waddell's signs Schober's testWɛ̈ɛ̈r cï bɛ̈n yök në kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c kɔ̈ɔ̈c
+
+[eng_Latn-dik_Latn] row 302894
+  EN : GAS targets its products at the youth segment.
+  REF: GAS ee käke luɔide thɔ̈ɔ̈ŋ në biäk de kɔc kor.
+  HYP: Aguiɛɛr GAS aye käkke ya looi ya looi tënë riënythii.
+
+[eng_Latn-dik_Latn] row 216322
+  EN : The Europe/Africa Zone was one of three groups of Davis Cup competition in 2004.
+  REF: Akut Yurop/Afrika ee töŋ de akuut kadiäk cï mëër de Kuoth Davis në run 2004.
+  HYP: Europe/Africa Zone ee töŋ de akuut diäk de Davis Cup në ruöön de 2004.
+
+[eng_Latn-dik_Latn] row 411973
+  EN : Sebastian and Paulini also performed both the English and International versions at the Final Mass at Randwick Race Course on 20 July.
+  REF: Sebastian ku Paulini aacï thoŋ ë Liŋëlith ku Thoŋ de Pinynhom ëbɛ̈n looi ëya dɛ̈t në Mass de Akër në Randwick Race Course në pɛɛi nïn 20 Pɛnëdhorou.
+  HYP: Sebastian ku Paulini acï bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈n bɛ̈
+
+[eng_Latn-dik_Latn] row 73766
+  EN : It was one of several firearms either manufactured or altered by Merrill in fulfillment of contracts with the Union government during the U.S. Civil War.
+  REF: Ee töŋ de kä juëc ke dhɛ̈ŋ cï ke looi wala cï keek waar në Merrill në luɔɔi de kä cï keek mat kenë akuma de Union në thɛɛr ke tɔŋ de kɔc ke U.S.
+  HYP: Ee töŋ de kä juëc ke mac cï Merrill looi tɛ̈dë ke gɛ̈ɛ̈r thïn në luɔ̈ɔ̈i de thɔ̈ɔ̈r kek akuma de United States në tɔŋ de baai yic.
+
+[eng_Latn-dik_Latn] row 36727
+  EN : It is a parody of American musical comedy of the 1920s.
+  REF: Ee kë cït kën de diɛt ke America ke run ke 1920s.
+  HYP: Ee kë cï thɔ̈ɔ̈ŋ ke kë cï looi në America në run 1920 yiic.
+
+[eng_Latn-nus_Latn] row 161950
+  EN : Acharya Jayasena has written a commentary on Pravachanasara titled Tatparyavritti (i.e. the Purport).
+  REF: Acharya Jayathena cuɛ gɔ̱r kɛ kui̱ Prabachanathara mi̱ ca ci̱ötdɛ gɔ̱r i̱ Tatparyabi̱ri̱ti̱(c.d. min lotdɛ).
+  HYP: Acharya Jayasena cɛ gɔ̱a̱r ruac kɛ kui̱ Pravachanasara mi̱ cɔali̱ Tatparyavritti (c.d.
+
+[eng_Latn-nus_Latn] row 184758
+  EN : He also wrote a satirical novel dealing with the follies of academia and the peculiarities of Canadian and American identities; titled Lincoln's Briefs, it has been published by Canadian Scholars' Press.
+  REF: Cuɛɛ bok mi̱ laa latkɛ ni̱ ruaacni̱ ti̱ jiäk ti̱ laa latkɛ ɛ ji̱ duël gɔ̱rä kɛnɛ ta̱a̱ in tä kɛ ji̱ Canada kɛnɛ ji̱ America; cua ciötdɛ gɔ̱r i̱ Lincoln's Briefs, cua ka̱m raar ɛ ji̱ gɔ̱a̱a̱r ji̱ Canada.
+  HYP: Jɛn cuɛ gɔ̱a̱r gɔ̱a̱r mi̱ la gɔ̱a̱r mi̱ gɔ̱a̱a̱r mi̱ ci̱ rɔ lot kɛ kui̱i̱ muɔ̱ɔ̱n in ci̱ tuɔɔk rɛy ŋi̱i̱cni̱ kɛnɛ ta̱a̱ mi̱ di̱i̱t kä ji̱ Canada kɛnɛ ji̱ America; mi̱ cɔali̱ Lincoln's Briefs, cua jɛ gɔ̱a̱r ɛ Canadian Scholars' Press.
+
+[eng_Latn-nus_Latn] row 465442
+  EN : Individuals who score highly on a measure such as the Consideration of Future Consequences Scale typically focus on the future implications of their behavior, whereas those low on CFC typically focus more on their immediate needs and concerns.
+  REF: Nɛy tin ci̱ pek mi̱ di̱i̱t jiek kä thëm mi̱ ciee kɛɛ Consideration of Future Consequences Scale laa guic ni̱ min bi̱ ben raar rɛy ciɛɛŋädiɛn kɛ gua̱a̱th in tä nhiam, ku nɛy tin kuiy CFC laa guic ni̱ tin go̱o̱r kɛnɛ tin diɛɛr kɛ kɛ.
+  HYP: Nɛy tin tekɛ pek mi̱ di̱i̱t ɛlɔ̱ŋ kɛ kui̱ mi̱ ce̱tkɛ mi̱ cäät kɛ mi̱ cɔali̱ Consideration of Future Consequences Scale laa guickɛ jɛ ɛlɔ̱ŋ kɛ ta̱a̱ ciɛŋädiɛn, gua̱a̱th ëë ci̱ nɛy tin kuiy kɛ CFC laa guickɛ jɛ ɛlɔ̱ŋ ɛlɔ̱ŋ kɛ tin go̱o̱r kɛn ɛ thi̱a̱k kɛnɛ diɛɛrkiɛn.
+
+[eng_Latn-nus_Latn] row 141443
+  EN : In 1979 they created the Fairlight CMI, one of the earliest music workstation with digital audio sampler, quickly used by artists such as Peter Gabriel, Kate Bush, and Jean Michel Jarre.
+  REF: Kɛ ruɔ̱n 1979 cu kɛn Fairlight CMI cak, ɛ jɛn gua̱a̱th in nhiam ëë laa lät kɛ buɔ̱l thi̱n, mi̱ caa la̱th lät ɛ ji̱ buɔ̱ɔ̱l ti̱ ciee kɛɛ Peter Gabriel, kɛɛ Kate Bush, kɛɛ Jean Michel Jarre.
+  HYP: Kɛ ruɔ̱n 1979 cukɛ Fairlight CMI cak, ɛ kɛl kä gua̱a̱th lätni̱ ti̱ nhiam ti̱ tä kɛɛ digital audio sampler, mi̱ caa la̱t kɛ pɛ̈th ɛ nɛy ti̱ ce̱tkɛ Peter Gabriel, Kate Bush, kɛnɛ Jean Michel Jarre.
+
+[eng_Latn-nus_Latn] row 186207
+  EN : These components include: Gait Straight leg raise Waddell's signs Schober's testEvidence from the back examination indicating possible spinal damage may prompt a rectal examination to identify intact tone.
+  REF: Kɔmpönɛni̱ ti̱ti̱ cu määni̱: Ja̱l Ciök ti̱ cuŋ kapkɛ nhial Waddell'ä nyuuthni̱ Schober'ä thëmTho̱berCuɔ̱tdɛ min bä kä thëm jɔkdɛ nyothɛ jɛ i̱ dɔ̱ŋ bɛ tekɛ mi̱ ci̱ ji̱ääk jɔkdɛ dɔ̱ŋ bɛ cu nööŋni̱ thëm rectal kɛ ŋi̱e̱c jɔawdɛ min te thi̱n.
+  HYP: Ti̱ti̱ laa matkɛ: Gait Straight leg lift Waddell's signs Schober's testTɛ̈ɛ̈cni̱ tëë ca la̱t kɛ jɔkdiɛn min nyoth ni̱ ɣöö derɛ tekɛ buɔ̱ɔ̱t mi̱ bi̱ tuɔɔk kä kɔrɛ dɔ̱ŋ bi̱ kɛn ɛ la̱t kɛ mi̱ bi̱ guic kɛ gua̱a̱th mi̱ bi̱ guic kɛ gua̱a̱th mi̱ /thiɛl duɔ̱ɔ̱r mi̱ bi̱ tuɔɔk.
+
+[eng_Latn-nus_Latn] row 302894
+  EN : GAS targets its products at the youth segment.
+  REF: GAS targɛtni̱ kuakni̱kɛ kä thɛgmɛn ŋuɛ̈tni.
+  HYP: GAS cuɛ la̱tdɛ go̱r kɛ kui̱i̱ runi̱ tin tä kɛ buɔ̱n.
+
+[eng_Latn-nus_Latn] row 216322
+  EN : The Europe/Africa Zone was one of three groups of Davis Cup competition in 2004.
+  REF: Kä Yurɔp/Apri̱ka Dhɔɔn cua kɛl kä buɔ̱n da̱ŋ diɔ̱k tëë ci̱ kööŋ kä Davis Cup rɛy 2004.
+  HYP: Kä Europe/African Zone ɛ jɛn kɛl kä gurupni̱ da̱ŋ diɔ̱k ti̱ täkɛ kä Davis Cup rɛy 2004.
+
+[eng_Latn-nus_Latn] row 411973
+  EN : Sebastian and Paulini also performed both the English and International versions at the Final Mass at Randwick Race Course on 20 July.
+  REF: Sebastian kɛnɛ Paulini bɔ̱ cukɛ ŋar kɛ thok Liŋlithni̱ kɛnɛ thok wecmuɔ̱ɔ̱n kɛɛliw kä Mass in jɔak kä Randwick Race Course kɛ cäŋ kä 20 kä Pay Bärɔw.
+  HYP: Sebastian kɛnɛ Paulini cua kɛ la̱t ɛ la ji̱ I̱ngli̱th kɛnɛ I̱thtra̱nɛciɔn version rɛy Final Mass kä Randwick Race Course kɛ 20 Juul.
+
+[eng_Latn-nus_Latn] row 73766
+  EN : It was one of several firearms either manufactured or altered by Merrill in fulfillment of contracts with the Union government during the U.S. Civil War.
+  REF: Ɛ jɛn kɛl kä mäc ti̱ ŋuan tëë caa täth kiɛ caa gɛr ɛ Merrill kɛ ɣöö bɛ ku lɛ lät kɛ kumɛ Union kɛ gua̱a̱th ëë tä U.S. Civil War thi̱n.
+  HYP: Jɛn ɛ jɛn kɛl kä thurɛni̱ ti̱ ŋuan ti̱ caa la̱t kiɛ ca gɛr ɛ Merrill kɛ gua̱a̱th ëë ci̱ kumɛ la̱t kɛ kumɛ kɛ gua̱a̱th ëë ci̱ kumɛ la̱t ɛ U.S. Civil War.
+
+[eng_Latn-nus_Latn] row 36727
+  EN : It is a parody of American musical comedy of the 1920s.
+  REF: Ɛn buɔ̱l dɔaali̱ mi̱ laa ŋarkɛ ɛ ji̱ America kɛ ruɔ̱n 1920-ni̱ tɔ̱tɔ̱.
+  HYP: Jɛn ɛ pa̱rödhi̱ duŋ American musi̱kal komɛdi̱ni̱ kä 1920-ni̱.
