@@ -18,8 +18,8 @@ kubeconfig
 .aws/
 
 # Dataset files and model weights (download script only, never committed)
-data/
-datasets/
+/data/
+/datasets/
 *.parquet
 *.arrow
 *.jsonl
@@ -32,10 +32,10 @@ datasets/
 *.gguf
 *.h5
 *.tar.gz
-model/
-models/
-checkpoints/
-outputs/
+/model/
+/models/
+/checkpoints/
+/outputs/
 
 # Python
 __pycache__/
