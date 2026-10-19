@@ -58,3 +58,6 @@ Thumbs.db
 # Build output
 build/
 *.egg-info/
+
+# Local widget request log
+/console/.data/

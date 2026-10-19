@@ -3,6 +3,7 @@ Command: python scripts/output_quality.py <base predictions.jsonl> <fine-tuned p
          (run in the training image with sacrebleu 2.5.1 installed)
 Inputs: baseline evaluation tm-eval-base-20261019-095652 and pipeline execution 2 Evaluate step,
         same test split (1,966 rows per direction), same decoding (beam 4, max_new_tokens 200, fp16).
+Sample pairs: English-Nuer-Dinka Parallel Corpus by Tajnaam (CC BY-NC 4.0), test split; model outputs from this project.
 Loop rule: one word trigram appears 3 or more times in the output while the source does not loop
            (the rule of proof/10). It misses shorter or punctuated loops (see the first Dinka sample).
 Sample rule: no hand-picking. Rows ranked by sentence chrF (sacreBLEU CHRF defaults) against the

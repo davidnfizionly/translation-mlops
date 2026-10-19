@@ -1,0 +1,23 @@
+{
+  "name": "translation-mlops-console",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@aws-sdk/client-cloudwatch": "^3.1152.0",
+    "@aws-sdk/client-sagemaker": "^3.1152.0",
+    "@aws-sdk/client-sagemaker-runtime": "^3.1152.0",
+    "@aws-sdk/credential-providers": "^3.1152.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "@vitejs/plugin-react": "^5.2.0",
+    "tailwindcss": "^4.3.3",
+    "vite": "^7.3.7"
+  }
+}

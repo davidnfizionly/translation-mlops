@@ -6,7 +6,8 @@ hand-picked: rows are ranked by sentence chrF against the reference, and 5 rows
 are drawn with a fixed seed from the top quarter ("good") and 5 from the
 bottom quarter ("bad"), per direction.
 
-Usage: python scripts/output_quality.py BASE_PREDICTIONS FINETUNED_PREDICTIONS
+Usage: python scripts/output_quality.py BASE_PREDICTIONS FINETUNED_PREDICTIONS [SAMPLES_JSON]
+SAMPLES_JSON, when given, receives the printed samples for the local widget.
 """
 
 import json
@@ -32,7 +33,7 @@ def loops(row):
     return max_trigram_repeat(row["hypothesis"]) >= 3 and max_trigram_repeat(row["source"]) < 3
 
 
-def main(base_path, ft_path):
+def main(base_path, ft_path, json_path=None):
     base, ft = load(base_path), load(ft_path)
     chrf = CHRF()
     for direction in sorted({r["direction"] for r in ft}):
@@ -45,6 +46,7 @@ def main(base_path, ft_path):
     print()
     rng = random.Random(SEED)
     base_by_key = {(r["row_id"], r["direction"]): r for r in base}
+    samples = []
     for direction in sorted({r["direction"] for r in ft}):
         rows = [r for r in ft if r["direction"] == direction]
         scored = sorted(((chrf.sentence_score(r["hypothesis"], [r["reference"]]).score, r) for r in rows), key=lambda x: (x[0], x[1]["row_id"]))
@@ -57,7 +59,13 @@ def main(base_path, ft_path):
                 print(f"  fine-tuned: {r['hypothesis']}")
                 print(f"  base:       {base_by_key[(r['row_id'], direction)]['hypothesis']}")
                 print()
+                samples.append({"row_id": r["row_id"], "direction": direction, "label": label, "sentence_chrf": round(score, 1),
+                                "looping": loops(r), "source": r["source"], "reference": r["reference"],
+                                "finetuned": r["hypothesis"], "base": base_by_key[(r["row_id"], direction)]["hypothesis"]})
+    if json_path:
+        with open(json_path, "w", encoding="utf-8") as f:
+            json.dump(samples, f, ensure_ascii=False, indent=1)
 
 
 if __name__ == "__main__":
-    main(*sys.argv[1:3])
+    main(*sys.argv[1:4])

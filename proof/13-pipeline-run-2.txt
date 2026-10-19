@@ -27,7 +27,7 @@ References are very probably machine generated (not confirmed by the dataset aut
 measure agreement with them, not the real quality for a speaker.
 
 Estimated cost (ml.g4dn.xlarge 0.736 USD/h, estimates):
-  Train     4,024 s -> 0.823 USD
-  Evaluate    833 s -> 0.170 USD
+  Train     4,024 s = 0.823 USD
+  Evaluate    833 s = 0.170 USD
   Total               0.993 USD
 After the run: 0 training jobs and 0 processing jobs InProgress.
