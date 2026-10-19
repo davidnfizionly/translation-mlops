@@ -79,3 +79,9 @@ Real problems, root causes and fixes, written as they occur.
 - What happened: pipeline execution 2 trained (3,000 steps), evaluated and passed the chrF gate, then the Register step failed in one second: the pipeline role "is not authorized to perform: sagemaker:CreateModelPackageGroup" on the model package group. No model version was created.
 - Root cause: the RegisterModel step calls CreateModelPackageGroup on the group even when the group already exists (it is created by Terraform). The pipeline policy only allowed CreateModelPackage, and the offline definition tests cannot check IAM.
 - Fix: add sagemaker:CreateModelPackageGroup to the RegisterModelVersion statement, scoped to the same group ARN. The trained model and the evaluation are kept; only the failed step is retried.
+
+## 2026-10-19 - Register retry rejected the registry metadata values
+
+- What happened: after the IAM fix, RetryPipelineExecution re-ran only Register, which failed again: CreateModelPackage rejected CustomerMetadataProperties because two values did not match the API pattern `[\p{L}\p{Z}\p{N}_.:/=+\-@]*` (the dataset value contained commas, the promotion rule contained ">").
+- Root cause: the value pattern was not checked when the definition was written; the offline tests only checked step wiring.
+- Fix: commas replaced by " - " and ">" by "greater than" in pipeline.tf, plus an offline test of every metadata value against the pattern. Not applied yet: second failure of the same step, so no further retry without approval.

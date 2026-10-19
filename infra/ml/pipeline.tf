@@ -156,8 +156,8 @@ locals {
               CustomerMetadataProperties = {
                 base_model          = "facebook/nllb-200-distilled-600M"
                 base_model_revision = "f8d333a098d19b4fd9a8b18f94170487ad3f821d"
-                dataset             = "English-Nuer-Dinka Parallel Corpus by Tajnaam, CC BY-NC 4.0, revision 28db28e6"
-                promotion_rule      = "fine-tuned chrF > baseline chrF in every direction"
+                dataset             = "English-Nuer-Dinka Parallel Corpus by Tajnaam - CC BY-NC 4.0 - revision 28db28e6"
+                promotion_rule      = "fine-tuned chrF greater than baseline chrF in every direction"
               }
             }
           }]

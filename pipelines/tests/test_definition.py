@@ -134,3 +134,11 @@ def test_same_image_as_the_baseline_job(definition):
     image = next(s for s in definition["Steps"] if s["Name"] == "Evaluate")["Arguments"]["AppSpecification"]["ImageUri"]
     tag = image.split(":")[-1]
     assert tag in launcher
+
+
+def test_registry_metadata_matches_the_api_pattern(definition):
+    # CreateModelPackage rejects metadata values outside this pattern (run 2 failed on "," and ">").
+    cond = next(s for s in definition["Steps"] if s["Name"] == "ChrfGate")["Arguments"]
+    props = cond["IfSteps"][0]["Arguments"]["CustomerMetadataProperties"]
+    for key, value in props.items():
+        assert re.fullmatch(r"[\p{L}\p{Z}\p{N}_.:/=+\-@]{1,256}".replace(r"\p{L}\p{Z}\p{N}", r"\w "), value), (key, value)

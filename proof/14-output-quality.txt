@@ -1,0 +1,136 @@
+Output quality check: looping outputs and fixed-rule samples - 2026-10-19 (UTC)
+Command: python scripts/output_quality.py <base predictions.jsonl> <fine-tuned predictions.jsonl>
+         (run in the training image with sacrebleu 2.5.1 installed)
+Inputs: baseline evaluation tm-eval-base-20261019-095652 and pipeline execution 2 Evaluate step,
+        same test split (1,966 rows per direction), same decoding (beam 4, max_new_tokens 200, fp16).
+Loop rule: one word trigram appears 3 or more times in the output while the source does not loop
+           (the rule of proof/10). It misses shorter or punctuated loops (see the first Dinka sample).
+Sample rule: no hand-picking. Rows ranked by sentence chrF (sacreBLEU CHRF defaults) against the
+             reference; 5 rows drawn with seed 13 from the top quarter ("good") and 5 from the bottom
+             quarter ("bad"), per direction. "good" and "bad" mean agreement with the reference only.
+References are very probably machine generated (not confirmed by the dataset author): a high
+sentence chrF can mean the model copied the reference's own errors (row 179133 repeats "de tong").
+
+eng_Latn-dik_Latn: looping outputs base 423 of 1966 (21.5%), fine-tuned 113 of 1966 (5.7%); empty base 0, fine-tuned 0
+eng_Latn-nus_Latn: looping outputs base 211 of 1966 (10.7%), fine-tuned 25 of 1966 (1.3%); empty base 0, fine-tuned 0
+
+[eng_Latn-dik_Latn] good, row 57112, sentence chrF 73.1, looping False
+  source:     Valups Corporation is a company based in Seoul, Korea which makes products for watching mobile television.
+  reference:  Akutnhom de Valups ee akutnhom tɔ̈ në Seoul, Korea ye käŋ looi bïk kɔc ya tïŋ në telebidhion yic.
+  fine-tuned: Akutnhom de Valups ee akutnhom tɔ̈ në Seoul, Korea ye käŋ looi në telebidhion de telebidhion de telebidhion de telebidhion.
+  base:       Valups Corporation ee akutnhom de Seoul, Korea ye looi käk bï keek ya tïŋ në television.
+
+[eng_Latn-dik_Latn] good, row 125522, sentence chrF 73.6, looping False
+  source:     The title is also used for archimandrite-level monastics and for some married priests holding the title of protopresbyter.
+  reference:  Rin aye luɔ̈ɔ̈i ëya dɛ̈t tënë kɔc ke kanitha ku kɔc kɔ̈k ke kanitha cï thiaak muk rin ke bäny ke kanitha.
+  fine-tuned: Kë cï gɔ̈t aye luɔ̈ɔ̈i ëya dɛ̈t tënë kɔc ke kanitha ku tënë kɔc kɔ̈k ke kanitha cï röt thiaak cï rin ke kanitha muk.
+  base:       Kën acï ya luɔ̈ɔ̈i aya tënë kɔc cï puɔ̈ɔ̈c bïk ya kɔc cï puɔ̈ɔ̈c bïk ya kɔc cï puɔ̈ɔ̈c bïk ya kɔc cï puɔ̈ɔ̈c bïk ya kɔc cï puɔ̈ɔ̈c bïk ya kɔc cï puɔ̈ɔ̈c bïk ya kɔc cï puɔ̈ɔ̈c bïk ya kɔc cï puɔ̈ɔ̈c bïk ya kɔc cï puɔ̈ɔ̈c bïk ya kɔc cï puɔ̈ɔ̈c bïk ya kɔc cï puɔ̈ɔ̈c bïk ya kɔc cï puɔ̈ɔ̈c bïk ya kɔc cï puɔ̈ɔ̈c bïk ya kɔc cï puɔ̈ɔ̈c bïk ya kɔc cï puɔ̈ɔ̈c bïk ya kɔc cï puɔ̈ɔ̈c bïk ya kɔc cï gam.
+
+[eng_Latn-dik_Latn] good, row 140170, sentence chrF 86.8, looping False
+  source:     In 2008, the organization received the Skoll Award for Social Entrepreneurship from the Skoll Foundation.
+  reference:  Në run de 2008, akutnhom acï wëu ke Skoll yök tënë akutnhom de Skoll.
+  fine-tuned: Në run de 2008, akutnhom acï ariööp de Skoll yök tënë akutnhom de Skoll.
+  base:       Në ruöön de 2008, akutnhom kënë acï Skoll Award for Social Entrepreneurship bɛ̈n yök tënë Akɔ̈m de Skoll.
+
+[eng_Latn-dik_Latn] good, row 179133, sentence chrF 98.0, looping True
+  source:     60 Squadron was a Royal Australian Air Force fighter squadron of World War II.
+  reference:  60 Akutnhom de tɔŋ ee akutnhom de tɔŋ de tɔŋ de rou de pinynhom.
+  fine-tuned: 60 Akutnhom de tɔŋ ee akutnhom de tɔŋ de tɔŋ de tɔŋ de rou de pinynhom.
+  base:       60 Squadron ee ye Royal Australian Air Force fighter squadron de tɔŋ de pinynhom rou.
+
+[eng_Latn-dik_Latn] good, row 324707, sentence chrF 82.6, looping True
+  source:     They prefer rotting wood and are generally found under the bark of rotting logs or stumps.
+  reference:  Aye tiim cï riääk nhiaar ku ka ye keek yök në pïu cï riääk yiic wala në tiim cï riääk yiic.
+  fine-tuned: Aye tiim cï riääk nhiaar ku ka ye keek yök në tiim cï riääk yiic ka tiim cï riääk yiic.
+  base:       Ayekë puɔ̈ɔ̈c në tiim cï riääk ku aye kek yök në kɔ̈u de tiim cï riääk.
+
+[eng_Latn-dik_Latn] bad, row 63689, sentence chrF 48.4, looping False
+  source:     He has been the Labor member for Rockhampton in the Queensland Legislative Assembly since 2017.
+  reference:  Yenë ka cë ya raan akutë Labor në Rockhampton në akutë Löŋë Queensland në ruɔ̈n 2017.
+  fine-tuned: Yen ee ye raan ë tɔ̈ në akut de kɔc lui në Rockhampton në akut de kɔc ke lööŋ ke Queensland yic jɔɔk në ruön de 2017.
+  base:       Yeen acï ya raan akutnhom de kɔc lui në Rockhampton në akutnhom de kɔc ke loi në Queensland në ruöön de 2017.
+
+[eng_Latn-dik_Latn] bad, row 168300, sentence chrF 48.9, looping False
+  source:     The capital lies at Weda.
+  reference:  Agɛ̈thdït atɔ̈u në Weda.
+  fine-tuned: Paandït atɔ̈ në Weda.
+  base:       Puɔ̈ɔ̈th bɛ̈ɛ̈i atɔ̈ Weda.
+
+[eng_Latn-dik_Latn] bad, row 311011, sentence chrF 32.4, looping False
+  source:     The stars spoofed themselves and the Western genre, with West providing a series of her trademark double entendres.
+  reference:  Cïr acï röt bɛ̈n thɔ̈ɔ̈r ku kɔc ke Western, kenë West ye käjuëc ke tajiir keen ye kek nyuɔɔth bɛ̈i.
+  fine-tuned: Kɔc cï daai aacï röt thɔ̈ɔ̈ŋ kenë kɔc ke piny ciɛɛm, ku West acï kä juëc ke käke ɣɔɔc kaa rou bɛ̈i.
+  base:       Kɔc cï röt looi kek aacï röt bɛ̈n ya thɔ̈ɔ̈ŋ kek kɔc kɔ̈k ke ye kɔc kɔ̈k ke ye kɔc kɔ̈k ke ye kɔc kɔ̈k ke ye kɔc kɔ̈k ke ye kɔc kɔ̈k ke ye kɔc kɔ̈k ke ye kɔc kɔ̈k ke ye kɔc kɔ̈k ke ye kɔc kɔ̈k ke ye kɔc kɔ̈k ke ye kɔc kɔ̈k ke ye kɔc kɔ̈k ke ye kɔc kɔ̈k ke ye kɔc kɔ̈k ke ye kɔc kɔ̈k ke ye kɔc kɔ̈k.
+
+[eng_Latn-dik_Latn] bad, row 323962, sentence chrF 34.5, looping True
+  source:     Injection locking and injection pulling are the frequency effects that can occur when a harmonic oscillator is disturbed by a second oscillator operating at a nearby frequency.
+  reference:  Tɛ̈u ë thɛ̈m ku thɛ̈m ë thɛ̈m aye kä ye röt lac looi të cïnë thɛ̈m de harmonic riääk në thɛ̈m de rou ye luui në thɛ̈m thiääk kenë yen.
+  fine-tuned: Tɛ̈n yenë käŋ tääu thïn ku tɛ̈n yenë käŋ tääu thïn aye kä ye röt looi në thɛɛr juëc yiic të cenë kä ye röt looi në thɛɛr juëc yiic ya riɔ̈ɔ̈k në kä ye röt looi në thɛɛr thiääk kenë kek yiic.
+  base:       Pël ëpënëak ëpënëak ëpënëak ëpënëak ëpënëak ëpënëak ëpënëak ëpënëak ëpënëak ëpënëak ëpënëak ëpënëak ëpënëak ëpënëak ëpënëak ëpënëak ëpënëak ëpënëak ëpënëak ëpënëak ëpënëak ëpënëak ëpënëak ëpënëak ëpënëak ëpënëak ëpënëak ëpënëak ëpënëak ëpënëak.
+
+[eng_Latn-dik_Latn] bad, row 488902, sentence chrF 45.2, looping False
+  source:     The protocol was created by the WHO Ebola Ethics Working Group in 2014 in the context of the 2014 West Africa Ebola outbreak.
+  reference:  Aguiɛɛr kënë acï looi në Akutnhom de Luɔɔi de Löŋ de Ebola de WHO në ruön de 2014 në kë cenë tuany ë Ebola bɛ̈n yök në ruön de 2014 në West Africa.
+  fine-tuned: Kë cï gɔ̈t acï looi në Akutnhom de Luɔɔi de Kɔc ke WHO në run de 2014 në thɛɛr ke tuanytuɛɛny ke tuanytuɛɛny ke Apirïka në run de 2014.
+  base:       Akɔ̈ɔ̈k acï cak në WHO's Ebola Ethics Working Group në run de 2014 në wɛ̈t de tuaany de Ebola në West Africa në run de 2014.
+
+[eng_Latn-nus_Latn] good, row 105549, sentence chrF 100.0, looping False
+  source:     Kylesa is the eponymous debut album by Kylesa.
+  reference:  Kylesa ɛ jɛn albäm in nhiam ëë caa ka̱m raar ɛ Kylesa.
+  fine-tuned: Kylesa ɛ jɛn albäm in nhiam ëë caa ka̱m raar ɛ Kylesa.
+  base:       Kylesa ɛ jɛn album ëë nhiam mi̱ cɔali̱ Kylesa.
+
+[eng_Latn-nus_Latn] good, row 125547, sentence chrF 90.7, looping False
+  source:     Sewers of Oblivion is a 1980 role-playing game adventure for Tunnels & Trolls published by Flying Buffalo.
+  reference:  Ɛn Sewers of Oblivion ɛ ŋar mi̱ caa ŋar kɛ ruɔ̱n 1980 mi̱ caa ka̱m raar ɛ ji̱ Flying Buffalo.
+  fine-tuned: Sewers of Oblivion ɛ ŋar mi̱ caa ŋar kɛ ruɔ̱n 1980 mi̱ caa ka̱m raar ɛ Flying Buffalo.
+  base:       Sewers of Oblivion ɛ mi̱ caa la̱t kɛ ruɔ̱n 1980 mi̱ cɔali̱ Rɔl-pi̱e̱e̱e̱e̱li̱ kɛ kui̱i̱ Tunnels & Trolls mëë caa la̱t ɛ Flying Buffalo.
+
+[eng_Latn-nus_Latn] good, row 302051, sentence chrF 82.3, looping False
+  source:     The Women's time trial at the 2000 UCI Road World Championships took place over a distance of 24.5 kilometers (15.2 miles) in Plouay, France on 11 October 2000.
+  reference:  Kä ɣɔ̱n thaakni̱ mään rɛy 2000 UCI Road World Championships cuɛ tuɔɔk kɛ na̱n mi̱ 24.5 ki̱lömi̱ti̱ri̱ (15.2 maali̱) rɛy Plouay, France kɛ cäŋkä 11 kä Pay Wäl 2000.
+  fine-tuned: Kä ɣɔ̱n gua̱th mään rɛy 2000 UCI Road World Championships cuɛ tuɔɔk kɛ ja̱l mi̱ 24.5 ki̱lömi̱ti̱ri̱(15.2 maali̱) rɛy Plouay, Pi̱rɛɛny kɛ cäŋkä 11 kä Pay Wäl 2000.
+  base:       Kä tha̱a̱ŋ gua̱thni̱ tëë ci̱ Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy Rɛy
+
+[eng_Latn-nus_Latn] good, row 379167, sentence chrF 90.3, looping False
+  source:     Rhinoguinea is a monotypic genus of snakes in the family Leptotyphlopidae.
+  reference:  Rhinoguinea ɛ mönötai̱pik jëna̱th duŋ thɔ̱ɔ̱l rɛy pa̱mɛli̱ Leptötai̱plöpidae.
+  fine-tuned: Rhinoguinea ɛ mönötai̱pik jëna̱th duŋ thɔ̱ɔ̱l rɛy pa̱mɛli̱ Leptöti̱plöpai̱dae.
+  base:       Rhinoguinea ɛ tha̱a̱ŋ tha̱a̱ŋ ji̱i̱ni̱ kä thɔ̱ɔ̱l rɛy dho̱o̱li̱ Leptotyphlopidae.
+
+[eng_Latn-nus_Latn] good, row 478808, sentence chrF 83.3, looping False
+  source:     Since 1924 CGMA has provided more than $187 million in assistance.
+  reference:  Ni̱ kɛ ruɔ̱n 1924 ɛn CGMA cɛ yio̱w ti̱ ba̱lkɛ $187 mi̱lli̱ön luäk.
+  fine-tuned: Ni̱ kɛ ruɔ̱n 1924 ɛn CGMA cɛ yio̱w ti̱ ba̱lkɛ $187 milliön ŋun kɛ luäk.
+  base:       Kɛ 1924, CGMA cuɛ luäk mi̱ di̱i̱t kä $187 million ka̱m.
+
+[eng_Latn-nus_Latn] bad, row 61025, sentence chrF 39.4, looping False
+  source:     Camelina offers several advantages over traditional biofuel feedstocks like soy and corn, such as competitive oil yields and shorter growing seasons.
+  reference:  Camelina cuɛ ŋuni̱ ti̱ ŋuan ti̱ gɔw ti̱ läny tradi̱ciɔnal baöpi̱o̱l pi̱i̱thtɔkni̱ ce̱tkɛ thöya kɛnɛ kɔrn, ce̱tkɛ mi̱ cie kɔmpi̱tɛtib ɣöyɔl mi̱ ci̱ ben raar kɛnɛ thi̱i̱thɔnni̱ pi̱thä ti̱ ciɛk.
+  fine-tuned: Camelina ŋunɛ lät ti̱ ŋuan ti̱ gɔw mi̱ läny ni̱ tin la̱tkɛ ni̱ wal ti̱ cie̱e̱ soy kɛnɛ mai̱th, ce̱tkɛ mi̱ cie mi̱ ɛ ko̱r mi̱ la jiɛnkɛ ni̱ ɣöyɔl kɛnɛ gua̱a̱th pithä mi̱ ciɛk.
+  base:       Camelina cuɛ tekɛ lua̱ŋni̱ ti̱ ŋuan kɛ kui̱i̱ bi̱o̱yöpi̱i̱li̱ ti̱ gööl ce̱tkɛ so̱o̱a kɛnɛ corn, ce̱tkɛ ta̱a̱ pua̱a̱nyni̱ pi̱i̱i̱ni̱ ti̱ gööl kɛnɛ gua̱a̱th ti̱ ci̱e̱ rɔ̱ riali̱kä.
+
+[eng_Latn-nus_Latn] bad, row 138550, sentence chrF 42.3, looping False
+  source:     In his only List A match, he scored an unbeaten 7 runs With the ball he took a single wicket at figures of 1/41.
+  reference:  Rɛy ŋarädɛ kärɔa rɛy Li̱th A, cuɛ runni̱ da̱ŋ 7 ti̱ /ka̱n me̱t joc nööŋ kɛ buɔ̱l cuɛ wi̱kɛt kɛl ka̱n kɛ pek mi̱ 1/41.
+  fine-tuned: Rɛy ŋa̱a̱ri̱kɛ tëë wal tëë cɛ ŋar kä List A, cuɛ run da̱ŋ 7 ti̱ /ka̱n joc yuɔr piny kɛ buɔ̱l ëë cɛ wicket kɛl yuɔr piny kɛ nämbäri̱ ti̱ 1/41.
+  base:       Rɛy ŋarädɛ kɛl kärɔa kä Li̱th A, cuɛ go̱r mi̱ /ka̱n bi̱ luäŋ kɛ ko̱k kɛ runi̱ da̱ŋ bärɔw kɛ bi̱li̱ mëë cɛ ka̱m wicket kɛl kɛ nämbäri̱ 1/41.
+
+[eng_Latn-nus_Latn] bad, row 196486, sentence chrF 34.9, looping False
+  source:     In the United States, redlining is the systematic denial of various services to residents of specific, often racially associated, neighborhoods or communities, either directly or through the selective raising of prices.
+  reference:  Kä United States, redlining ɛ duɔ̱ɔ̱p mi̱ laa lo̱k ni̱ lät ti̱ gööl ti̱ laa la̱tkɛ ɛ nɛy tin cieŋ gua̱a̱th mi̱ dɔ̱ŋ, ti̱ laa matkɛ kɛ döör, nɛy tin thieekɛ naath kiɛ ji̱ wec, ɛ la mi̱ caa la̱t ɛ jɔc kiɛ mi̱ caa kök jakä wɔ̱ nhial.
+  fine-tuned: Rɛy Yunai̱tid I̱thtëtni̱, redlining ɛ thi̱thtɛmatik mi̱ lo̱k lät ti̱ gööl kä ji̱ ciëŋ ti̱ gööl, ni̱ ciaaŋ ti̱ thi̱ääk kɛ dööri̱, ji̱ thi̱ääkä kiɛ ji̱ wec, ɛ la mi̱ cuŋ ɛ jɔc kiɛ kɛ rëp yio̱o̱ni̱.
+  base:       Rɛy United States, redlining ɛ thi̱thtɛmatik mi̱ lo̱k lätni̱ ti̱ gööl kä nɛy tin cieŋ rɛy gua̱thni̱ ti̱ gööl, gua̱thni̱ ti̱ ŋuan kɛ kui̱i̱ dööri̱, gua̱thni̱ ti̱ gööl, gua̱thni̱ ti̱ gööl kiɛ gua̱thni̱ ti̱ gööl, kiɛ kɛ thuɔ̱ɔ̱k kiɛ kɛ ɣöö ba tho̱p yio̱o̱ni̱ jakä di̱t.
+
+[eng_Latn-nus_Latn] bad, row 319515, sentence chrF 52.1, looping True
+  source:     The last published hard copy issue of the magazine was the Winter 2002 issue.
+  reference:  Kä wargak in jɔak ëë ca ka̱m raar kɛ warɛgak ɛ Winter 2002.
+  fine-tuned: Ɛn wargak in jɔak ëë caa ka̱m raar ɛ la wargak ëë caa ka̱m raar kɛ ruɔ̱n 2002 mëë caa ka̱m raar kɛ ruɔ̱n 2002.
+  base:       Kä gua̱a̱th ëë jɔak mëë cua la̱t ɛ ji̱ Winter 2002 ɛ jɛn gua̱a̱th ëë ci̱ ji̱ gɔ̱a̱r thi̱n.
+
+[eng_Latn-nus_Latn] bad, row 430095, sentence chrF 55.5, looping False
+  source:     It is notable as representing an early effort by GTV-9 at locally produced content.
+  reference:  Jɛn cua ŋa̱c cie mi̱ cuŋɛ la mi̱ cuŋ ɛ la mi̱ ca la̱t ɛ GTV-9 kɛ kui̱ kä tëë ca la̱t rɛy wec.
+  fine-tuned: Jɛn cua ŋa̱c ɛ la mi̱ cuŋ kɛ kui̱ la̱t ëë nhiam ɛ GTV-9 kä tin ca la̱t rɛy wec.
+  base:       Jɛn cua ŋa̱c ɛlɔ̱ŋ kɛ ɣöö cuɛ la̱t ëë wal ɛ GTV-9 kɛ kui̱i̱ ŋɔaani̱ tëë caa la̱t kɛ gua̱a̱th ɛmɔ.
+
