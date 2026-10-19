@@ -1,0 +1,33 @@
+Pipeline execution 2 - 2026-10-19 (UTC)
+Pipeline: translation-mlops-train-eval-register, execution lftys35r436m (display name full-run-2)
+Overall status: Failed (Register step only; Train, Evaluate and ChrfGate succeeded)
+
+Steps (UTC):
+  Train      Succeeded  12:02:41 - 13:13:31  ml.g4dn.xlarge, 50,000 rows x 2 directions, 3,000 steps,
+                                             batch 8 x 4 accumulation (effective 32), fp16, Adafactor
+             training container 12:06:26 - 13:13:30, BillableTimeInSeconds 4,024 (under the 7,200 s cap)
+             final train loss 0.779, final validation loss 0.674 (500 validation rows)
+  Evaluate   Succeeded  13:13:31 - 13:28:35  processing job 12:14:29 - 13:28:22 (833 s), Tesla T4
+  ChrfGate   Succeeded  13:28:36            gate.promote = 1
+  Register   Failed     13:28:37            ClientError: the pipeline role is not authorized to perform
+                                             sagemaker:CreateModelPackageGroup on the model package group
+
+Test set: 1,966 rows per direction, sha256 3359bffa3d984e7e60cc17a52715e7495bf545986655fa9998e747c570655c5b
+Decoding (same for both models): num_beams 4, max_new_tokens 200, max_source_tokens 256, float16
+Signatures (sacreBLEU 2.5.1):
+  BLEU nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1
+  chrF nrefs:1|case:mixed|eff:yes|nc:6|nw:0|space:no|version:2.5.1
+
+Direction            base BLEU  fine-tuned BLEU  delta   base chrF  fine-tuned chrF  delta
+eng_Latn-dik_Latn        10.25            35.51  +25.26      31.79            58.90  +27.11
+eng_Latn-nus_Latn        17.07            48.34  +31.27      40.72            68.37  +27.65
+
+Gate rule: promote if fine-tuned chrF > baseline chrF in every direction. Result: promote = 1.
+References are very probably machine generated (not confirmed by the dataset author); the scores
+measure agreement with them, not the real quality for a speaker.
+
+Estimated cost (ml.g4dn.xlarge 0.736 USD/h, estimates):
+  Train     4,024 s -> 0.823 USD
+  Evaluate    833 s -> 0.170 USD
+  Total               0.993 USD
+After the run: 0 training jobs and 0 processing jobs InProgress.

@@ -204,7 +204,7 @@ data "aws_iam_policy_document" "pipeline" {
 
   statement {
     sid     = "RegisterModelVersion"
-    actions = ["sagemaker:CreateModelPackage", "sagemaker:DescribeModelPackage", "sagemaker:DescribeModelPackageGroup", "sagemaker:AddTags"]
+    actions = ["sagemaker:CreateModelPackage", "sagemaker:CreateModelPackageGroup", "sagemaker:DescribeModelPackage", "sagemaker:DescribeModelPackageGroup", "sagemaker:AddTags"]
     resources = [
       aws_sagemaker_model_package_group.translation.arn,
       "arn:${data.aws_partition.current.partition}:sagemaker:${local.region}:${local.account}:model-package/${aws_sagemaker_model_package_group.translation.model_package_group_name}/*",
