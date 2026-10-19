@@ -97,3 +97,9 @@ Real problems, root causes and fixes, written as they occur.
 - What happened: the "Model latency (ms)" widget plots p50 and p90 as expressions divided by 1,000 (305 and 548 ms), but the CloudWatch axis is labeled "Microseconds" with values "305.2 us" and "548.4 us", which reads as a latency a thousand times too low.
 - Root cause: a metric math expression keeps the unit of its source metric (ModelLatency is reported in microseconds), so the axis label does not follow the division.
 - Fix: none applied during the session (capture 06 already taken). The README states that the widget values are milliseconds; the next change of infra/monitoring sets a left-axis label "ms" and hides the unit. The values themselves are confirmed by proof/17 (ModelLatency p50 305 ms, p90 548 ms).
+
+## 2026-10-19 - Pre-publish audit: hook false positives and an attribution keyword in history
+
+- What happened: a dry run of the pre-push hook on the full history refused the push. It read `+@pytest.fixture` in diffs as an e-mail address, and it found the attribution-trailer keyword in the devlog and in the hook test proof, where it only described a hook test case.
+- Root cause: the e-mail pattern accepted a local part made of the diff's leading `+` alone; the keyword check does not distinguish a description from a real trailer.
+- Fix: the e-mail pattern now needs a letter or digit before `@` (tested: a real address is still caught, decorators are not). The two descriptions were reworded to "attribution trailer" in every commit with `git filter-branch` before any push (nothing had been pushed); the dry run then passed.
