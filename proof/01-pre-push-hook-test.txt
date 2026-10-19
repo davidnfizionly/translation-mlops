@@ -9,7 +9,7 @@ block     block   ARN with account ID (arn:aws:iam::<acct>:role/x)
 block     block   account ID in account context (account_id = <acct>)
 block     block   e-mail address other than the GitHub noreply address
 block     block   attribution trailer in the commit message
-block     block   assistant name in file content
+block     block   denylisted name in file content
 block     block   terraform.tfstate file
 block     block   .tfvars file
 block     block   .safetensors weights file
