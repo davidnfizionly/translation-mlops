@@ -1,19 +1,26 @@
-Endpoint session report (before destroy) - generated 2026-10-19T14:57:23Z
-Command: python scripts/session_report.py --created 2026-10-19T14:36:38Z --deleted 2026-10-19T14:57:23Z
-The deletion time is not known yet: the figures below stop at 2026-10-19T14:57:23Z and are completed after the destroy.
+Endpoint session report (final) - 2026-10-19 (UTC)
+Endpoint creation started 14:36:38, InService 14:43:40, terraform destroy 15:11:20 to 15:11:51
+(endpoint deleted in 2 s within that window; 15:11:51 is used as the end, an upper bound).
+Command: python scripts/session_report.py --created 2026-10-19T14:36:38Z --deleted 2026-10-19T15:11:51Z
+Requests: 17 from the headless test and scenarios (14:44-14:46), 5 manual neutral sentences in the
+local widget (14:59-15:09).
 
-Endpoint session 2026-10-19T14:36:38Z to 2026-10-19T14:57:23Z: 1245 s billed (creation to deletion, estimate)
+Endpoint session 2026-10-19T14:36:38Z to 2026-10-19T15:11:51Z: 2113 s billed (creation to deletion, estimate)
 Hourly price: 0.736 USD (ml.g4dn.xlarge real-time hosting, us-east-1)
-Requests: 17 sent by the proxy, 17 answered; CloudWatch Invocations sum: 17
-Round-trip latency ms (proxy): n=17 mean 640.24 p50 539.00 p90 1027.20
-ModelLatency ms (CloudWatch, per hour bucket 14:31 UTC): p50 305, p90 548
-Time answering requests: 10.9 s, 0.0022 USD attributed to requests (estimate)
-Average per request: 0.000131 USD (estimate)
-Idle time: 1234 s, 0.2523 USD (estimate)
-Endpoint total: 0.2545 USD (estimate; Cost Explorer comparison later, lags up to 24 h)
+Requests: 22 sent by the proxy, 22 answered; CloudWatch Invocations sum: 22
+Round-trip latency ms (proxy): n=22 mean 650.41 p50 529.00 p90 1007.60
+ModelLatency ms (CloudWatch, per hour bucket 14:31 UTC): p50 277, p90 535
+Time answering requests: 14.3 s, 0.0029 USD attributed to requests (estimate)
+Average per request: 0.000133 USD (estimate)
+Idle time: 2099 s, 0.4291 USD (estimate)
+Endpoint total: 0.4320 USD (estimate; Cost Explorer comparison later, lags up to 24 h)
 
 Drift signals (live requests vs held-out test split references):
-  dik_Latn input words   live n=14 mean 13.64 p50 15.00 p90 25.00 | test n=1966 mean 18.31 p50 17.00 p90 30.00
-  dik_Latn output/input  live n=14 mean 1.30 p50 1.25 p90 1.84 | test n=1966 mean 1.23 p50 1.20 p90 1.57
-  nus_Latn input words   live n=3 mean 6.67 p50 8.00 p90 8.00 | test n=1966 mean 18.31 p50 17.00 p90 30.00
-  nus_Latn output/input  live n=3 mean 1.29 p50 1.12 p90 2.12 | test n=1966 mean 1.29 p50 1.26 p90 1.67
+  dik_Latn input words   live n=17 mean 12.53 p50 14.00 p90 23.80 | test n=1966 mean 18.31 p50 17.00 p90 30.00
+  dik_Latn output/input  live n=17 mean 1.31 p50 1.25 p90 1.88 | test n=1966 mean 1.23 p50 1.20 p90 1.57
+  nus_Latn input words   live n=5 mean 6.80 p50 8.00 p90 8.00 | test n=1966 mean 18.31 p50 17.00 p90 30.00
+  nus_Latn output/input  live n=5 mean 1.38 p50 1.12 p90 2.10 | test n=1966 mean 1.29 p50 1.26 p90 1.67
+
+After the destroy (15:12 UTC): list-endpoints 0, list-endpoint-configs 0, list-models 0, endpoint IAM role
+NoSuchEntity, infra/endpoint state empty; 0 training and 0 processing jobs InProgress.
+infra/monitoring kept (dashboard and 2 alarms, no idle compute cost).
