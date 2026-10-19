@@ -61,3 +61,9 @@ Real problems, root causes and fixes, written as they occur.
 - What happened: `create_processing_job` returned a ValidationException; the `bash -c "<pip install && python run_eval.py ...>"` entrypoint string exceeded the 256-character limit of `ContainerEntrypoint` members. No job was created.
 - Root cause: the whole command line, including the pinned model revision, was passed as one entrypoint member.
 - Fix: a small `evaluation/run_eval.sh` is shipped with the code and used as the entrypoint; the model arguments go in `ContainerArguments`. The job then started on the first try.
+
+## 2026-10-19 - Docker Desktop stopped between sessions
+
+- What happened: `docker` was not found in WSL ("could not be found in this WSL 2 distro") when generating the reference pipeline definition.
+- Root cause: Docker Desktop was not running, so its CLI link in WSL was missing.
+- Fix: Docker Desktop was reopened; `docker version` showed the server again and the local images were still present.
