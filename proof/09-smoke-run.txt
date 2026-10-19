@@ -1,0 +1,23 @@
+Smoke training run - 2026-10-19 (UTC)
+Command: python scripts/launch_training.py --profile smoke --max-runtime-seconds 1800
+Job: tm-smoke-20261019-094332, ml.g4dn.xlarge (1 x Tesla T4), on-demand, status Completed
+Image: huggingface-pytorch-training 2.8.0-transformers4.56.2-gpu-py312-cu129-ubuntu22.04
+Base model: facebook/nllb-200-distilled-600M, revision f8d333a0 (CC BY-NC 4.0)
+Data: 2,000 of 453,106 training rows (deterministic subset, seed 13), 2 directions = 4,000 examples;
+      100 validation rows; test split not used.
+
+Phases (from SecondaryStatusTransitions, UTC)
+  Starting + Pending   09:43:34 - 09:44:42   (not billed)
+  Downloading          09:44:42 - 09:49:34   292 s (container image and input data)
+  Training             09:49:34 - 09:51:40   126 s
+  Uploading            09:51:40 - 09:52:37    58 s
+BillableTimeInSeconds: 475
+Estimated cost: 475 / 3600 h x 0.736 USD/h = 0.097 USD (estimate; Cost Explorer figure to follow)
+
+Training (from the job log)
+  max_steps 30, effective batch 32 (16 x 2 accumulation), Adafactor, lr 1e-4, fp16
+  train_runtime 53.4 s, train_steps_per_second 0.562, train_samples_per_second 18.0
+  train_loss 1.933 (mean over 30 steps)
+  validation loss before 2.144, after 1.595 (100 rows x 2 directions)
+Artifacts: model.tar.gz 2.29 GB; checkpoints 5.0 GB (expire after 7 days by lifecycle rule)
+After the run: 0 training jobs InProgress.
