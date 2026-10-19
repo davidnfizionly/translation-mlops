@@ -41,15 +41,17 @@ locals {
             ]
           }
           HyperParameters = {
-            train_rows                 = { Get = "Parameters.TrainRows" }
-            max_steps                  = { Get = "Parameters.MaxSteps" }
-            valid_rows                 = "500"
-            eval_steps                 = "500"
-            save_steps                 = "500"
-            warmup_steps               = "200"
-            sagemaker_program          = "\"train.py\""
-            sagemaker_submit_directory = "\"${local.ml_s3}/${aws_s3_object.train_sourcedir.key}\""
-            sagemaker_region           = "\"${local.region}\""
+            train_rows                  = { Get = "Parameters.TrainRows" }
+            max_steps                   = { Get = "Parameters.MaxSteps" }
+            valid_rows                  = "500"
+            eval_steps                  = "500"
+            save_steps                  = "500"
+            warmup_steps                = "200"
+            per_device_batch_size       = "8"
+            gradient_accumulation_steps = "4"
+            sagemaker_program           = "\"train.py\""
+            sagemaker_submit_directory  = "\"${local.ml_s3}/${aws_s3_object.train_sourcedir.key}\""
+            sagemaker_region            = "\"${local.region}\""
           }
           InputDataConfig = [for split in ["train", "valid"] : {
             ChannelName = split
@@ -66,7 +68,9 @@ locals {
           CheckpointConfig  = { S3Uri = { "Std:Join" = { On = "/", Values = ["${local.ml_s3}/checkpoints/pipeline", local.execution_id] } } }
           ResourceConfig    = { InstanceType = "ml.g4dn.xlarge", InstanceCount = 1, VolumeSizeInGB = 50 }
           StoppingCondition = { MaxRuntimeInSeconds = 7200 }
-          Tags              = local.pipeline_tags
+          # Batch 8 x 4 and expandable segments: run 1 ran out of GPU memory at step 1,700 with batch 16 x 2.
+          Environment = { PYTORCH_CUDA_ALLOC_CONF = "expandable_segments:True" }
+          Tags        = local.pipeline_tags
         }
       },
       {

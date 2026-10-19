@@ -120,6 +120,10 @@ def test_limits_and_defaults(definition):
     assert train["StoppingCondition"]["MaxRuntimeInSeconds"] == 7200
     assert train["ResourceConfig"]["InstanceType"] == "ml.g4dn.xlarge" and train["ResourceConfig"]["InstanceCount"] == 1
     assert train["CheckpointConfig"]["S3Uri"]["Std:Join"]["Values"][1] == {"Get": "Execution.PipelineExecutionId"}
+    # Memory settings after the out-of-memory failure of run 1 (effective batch stays 32).
+    hp = train["HyperParameters"]
+    assert (hp["per_device_batch_size"], hp["gradient_accumulation_steps"]) == ("8", "4")
+    assert train["Environment"]["PYTORCH_CUDA_ALLOC_CONF"] == "expandable_segments:True"
     evaluate = next(s for s in definition["Steps"] if s["Name"] == "Evaluate")["Arguments"]
     assert evaluate["StoppingCondition"]["MaxRuntimeInSeconds"] == 2700
     assert evaluate["ProcessingResources"]["ClusterConfig"]["InstanceType"] == "ml.g4dn.xlarge"

@@ -1,0 +1,25 @@
+Pipeline execution 1 - FAILED (out of GPU memory) - 2026-10-19 (UTC)
+Pipeline: translation-mlops-train-eval-register, execution 7o4nvuc2j45p (display name full-run-1)
+Step Train: Failed. Evaluate, ChrfGate and Register did not run; nothing was registered.
+Training job: pipelines-7o4nvuc2j45p-Train-847aryAfaA, ml.g4dn.xlarge (Tesla T4, 14.56 GiB usable)
+
+Phases (UTC): Pending 10:34:33-10:37:09 (not billed), Downloading 10:37:09-10:42:17 (308 s),
+              Training 10:42:17-11:11:05 (1,728 s), Uploading 3 s
+BillableTimeInSeconds: 2,039
+Estimated cost: 2,039 / 3600 h x 0.736 USD/h = 0.417 USD (estimate), spent without a usable model
+
+Failure reason (from DescribeTrainingJob):
+  torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 1.96 GiB. GPU 0 has a total
+  capacity of 14.56 GiB of which 1017.81 MiB is free. ... 11.42 GiB is allocated by PyTorch,
+  and 2.01 GiB is reserved by PyTorch but unallocated.
+  57% | 1700/3000 [27:30<21:01, 1.03 it/s]
+
+Progress before the failure (50,000 training rows, 500 validation rows x 2 directions):
+  validation loss before training 2.169
+  step  500: 0.998
+  step 1000: 0.838
+  step 1500: 0.755
+  last logged training loss 0.823 (step 1700)
+Measured speed: 1,700 steps in 27 min 30 s = 1.03 steps per second (batch 16 x 2 accumulation).
+The smoke run figure (0.562 steps/s) included two evaluations and two checkpoints in 30 steps.
+After the failure: 0 training jobs and 0 processing jobs InProgress.

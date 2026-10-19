@@ -67,3 +67,9 @@ Real problems, root causes and fixes, written as they occur.
 - What happened: `docker` was not found in WSL ("could not be found in this WSL 2 distro") when generating the reference pipeline definition.
 - Root cause: Docker Desktop was not running, so its CLI link in WSL was missing.
 - Fix: Docker Desktop was reopened; `docker version` showed the server again and the local images were still present.
+
+## 2026-10-19 - Full training ran out of GPU memory at step 1,700 of 3,000
+
+- What happened: pipeline execution 1 failed in the Train step after 27 minutes of training: `torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 1.96 GiB` on the 14.56 GiB T4. Validation loss had gone from 2.169 to 0.755 by step 1,500. Billable time 2,039 s, about 0.42 USD, with no usable model. Evaluate and Register did not run.
+- Root cause: the 1.96 GiB request matches the float32 logits of one batch at the maximum target length: 16 sentences x 128 tokens x 256,206 vocabulary entries x 4 bytes. Batches are grouped by length, so the longest batch arrived late, when 2.01 GiB of GPU memory was reserved but fragmented. The 30-step smoke run never reached a full-length batch.
+- Fix: per-device batch 8 with 4 accumulation steps (same effective batch of 32, half the logits peak), and `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` in the training job environment against fragmentation. The run is not resumed from the step-1,500 checkpoint: changing the per-device batch changes the data order, and a clean run is simpler to report.
