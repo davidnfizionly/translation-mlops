@@ -150,7 +150,7 @@ aws sagemaker start-pipeline-execution --pipeline-name translation-mlops-train-e
 
 Output: [proof/10-baseline-evaluation.txt](proof/10-baseline-evaluation.txt), [proof/13-pipeline-run-2.txt](proof/13-pipeline-run-2.txt)
 
-Sample outputs are not hand-picked: 5 sentences per direction drawn with a fixed seed from the best quarter and 5 from the worst quarter by sentence chrF, each with the base model's output. Even the best quarter holds an output that still loops ("telebidhion de telebidhion de telebidhion") and one that scores 98 because it copies the reference's own repetition; the worst quarter holds outputs far from the references (sentence chrF 32 to 55).
+Sample outputs are not hand-picked: 5 sentences per direction drawn with a fixed seed from the best quarter and 5 from the worst quarter by sentence chrF, each with the base model's output. Even the best quarter holds an output that still loops ("telebidhion de telebidhion de telebidhion") and one that scores 98 because it copies the reference's own repetition; the worst quarter holds outputs far from the references (sentence chrF 32.4 to 55.5 in the samples).
 
 ```bash
 python scripts/output_quality.py <base predictions.jsonl> <fine-tuned predictions.jsonl>
