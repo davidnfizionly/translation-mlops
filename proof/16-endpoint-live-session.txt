@@ -1,0 +1,27 @@
+Live endpoint demo session - 2026-10-19 (UTC)
+Endpoint: translation-mlops-nllb-en-din-nus, 1 x ml.g4dn.xlarge, model from Model Registry version 1
+Creation started 14:36:38, InService 14:43:40 (7 min 2 s of start-up, billed as idle)
+Requests go through the local proxy (console/server/api.js) with the CLI credentials; no public API.
+Inputs: neutral demonstration sentences and the 10 stored test sentences only (no personal data).
+
+Headless run (node console/e2e/flow.mjs <dir> live), automated captures auto-01 to auto-03:
+2026-10-19T14:44:03.955Z attribution, licenses and reference warning shown
+2026-10-19T14:44:03.977Z stored metrics shown
+2026-10-19T14:44:06.069Z live Dinka output: Tɔ̈ɔ̈u pïu ke këc dek.
+2026-10-19T14:44:12.989Z 10 stored Dinka sentences answered by the live endpoint
+2026-10-19T14:44:19.174Z requests counted: 11
+
+Scenario "Live translation": demonstration sentences, both directions, as returned (not edited).
+These outputs have not been checked by a speaker and are not reliable translations.
+Format: target | English | output | mode, round trip
+dik_Latn | Boil water before drinking. | Tɔ̈ɔ̈u pïu ke këc dek. | live 412 ms
+dik_Latn | Wash your hands with soap and clean water. | Lɔ̈ɔ̈k yï cin në pïu ë pïu yiic ku pïu ë pïu ë pïu yiic. | live 506 ms
+dik_Latn | The clinic opens at eight in the morning. | Clinic ee liep thok në thaa bɛ̈t ë thää. | live 472 ms
+nus_Latn | Boil water before drinking. | Boil pi̱w ɛ ŋot /kenɛ ni̱ kɔk. | live 453 ms
+nus_Latn | Wash your hands with soap and clean water. | Laath tetdu kɛ tha̱bɔn kɛnɛ pi̱w ti gɔw. | live 489 ms
+nus_Latn | The clinic opens at eight in the morning. | Kä ki̱li̱nik la lɛp kɛ thaak bädäk kɛ runwaŋ. | live 519 ms
+Visible defects: the Dinka output for the hand-washing sentence repeats "piu e piu"; the Nuer output for
+"Boil water before drinking." keeps the English word "Boil".
+
+Server-side checks at 14:45 UTC: CloudWatch Invocations sum 17 = 17 requests logged by the proxy;
+data capture file written under datacapture/<endpoint>/AllTraffic/2026/10/19/14/ (bucket masked).

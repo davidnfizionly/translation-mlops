@@ -14,7 +14,7 @@ Usage: python scripts/session_report.py --created ISO --deleted ISO [--test data
 import argparse
 import json
 import statistics
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import boto3
@@ -72,7 +72,7 @@ def main():
     ms = [r["ms"] for r in ok]
     print(f"Round-trip latency ms (proxy): {quantiles(ms)}")
     for d in latency:
-        print(f"ModelLatency ms (CloudWatch, per hour bucket {d['Timestamp']:%H:%M}): p50 {d['ExtendedStatistics']['p50'] / 1000:.0f}, p90 {d['ExtendedStatistics']['p90'] / 1000:.0f}")
+        print(f"ModelLatency ms (CloudWatch, per hour bucket {d['Timestamp'].astimezone(timezone.utc):%H:%M} UTC): p50 {d['ExtendedStatistics']['p50'] / 1000:.0f}, p90 {d['ExtendedStatistics']['p90'] / 1000:.0f}")
     print(f"Time answering requests: {busy:.1f} s, {busy * per_second:.4f} USD attributed to requests (estimate)")
     if ok:
         print(f"Average per request: {busy * per_second / len(ok):.6f} USD (estimate)")

@@ -1,0 +1,19 @@
+Endpoint session report (before destroy) - generated 2026-10-19T14:57:23Z
+Command: python scripts/session_report.py --created 2026-10-19T14:36:38Z --deleted 2026-10-19T14:57:23Z
+The deletion time is not known yet: the figures below stop at 2026-10-19T14:57:23Z and are completed after the destroy.
+
+Endpoint session 2026-10-19T14:36:38Z to 2026-10-19T14:57:23Z: 1245 s billed (creation to deletion, estimate)
+Hourly price: 0.736 USD (ml.g4dn.xlarge real-time hosting, us-east-1)
+Requests: 17 sent by the proxy, 17 answered; CloudWatch Invocations sum: 17
+Round-trip latency ms (proxy): n=17 mean 640.24 p50 539.00 p90 1027.20
+ModelLatency ms (CloudWatch, per hour bucket 14:31 UTC): p50 305, p90 548
+Time answering requests: 10.9 s, 0.0022 USD attributed to requests (estimate)
+Average per request: 0.000131 USD (estimate)
+Idle time: 1234 s, 0.2523 USD (estimate)
+Endpoint total: 0.2545 USD (estimate; Cost Explorer comparison later, lags up to 24 h)
+
+Drift signals (live requests vs held-out test split references):
+  dik_Latn input words   live n=14 mean 13.64 p50 15.00 p90 25.00 | test n=1966 mean 18.31 p50 17.00 p90 30.00
+  dik_Latn output/input  live n=14 mean 1.30 p50 1.25 p90 1.84 | test n=1966 mean 1.23 p50 1.20 p90 1.57
+  nus_Latn input words   live n=3 mean 6.67 p50 8.00 p90 8.00 | test n=1966 mean 18.31 p50 17.00 p90 30.00
+  nus_Latn output/input  live n=3 mean 1.29 p50 1.12 p90 2.12 | test n=1966 mean 1.29 p50 1.26 p90 1.67

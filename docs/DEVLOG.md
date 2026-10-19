@@ -91,3 +91,9 @@ Real problems, root causes and fixes, written as they occur.
 - What happened: the first call of scripts/register_model_version.py failed with "Tags are not supported in Model Package versions. Please add them to the Model Package Group."
 - Root cause: tags are only accepted on the model package group; the script added the Project tag to the version request.
 - Fix: the tag was removed from the request (the group already carries Project=translation-mlops from Terraform). The second call registered version 1, Approved.
+
+## 2026-10-19 - Dashboard latency axis shows microseconds for millisecond values
+
+- What happened: the "Model latency (ms)" widget plots p50 and p90 as expressions divided by 1,000 (305 and 548 ms), but the CloudWatch axis is labeled "Microseconds" with values "305.2 us" and "548.4 us", which reads as a latency a thousand times too low.
+- Root cause: a metric math expression keeps the unit of its source metric (ModelLatency is reported in microseconds), so the axis label does not follow the division.
+- Fix: none applied during the session (capture 06 already taken). The README states that the widget values are milliseconds; the next change of infra/monitoring sets a left-axis label "ms" and hides the unit. The values themselves are confirmed by proof/17 (ModelLatency p50 305 ms, p90 548 ms).
