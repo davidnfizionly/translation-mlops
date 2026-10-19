@@ -4,7 +4,7 @@ Fine-tuning NLLB-200 for English to Dinka and English to Nuer on SageMaker, with
 
 **Dataset:** [English-Nuer-Dinka Parallel Corpus](https://huggingface.co/datasets/dayomtechnologies/english-nuer-dinka-parallel-corpus) by Tajnaam, [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/). **Base model:** [NLLB-200 distilled 600M](https://huggingface.co/facebook/nllb-200-distilled-600M) by Meta, [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/). Because of these non-commercial licenses, the fine-tuned model is not published, no dataset file or model weight is in this repository (a download script and a handful of attributed sample pairs only), and the widget runs locally with no public service.
 
-**About the scores:** the Nuer and Dinka references in the corpus are very probably machine generated; this is not confirmed by the dataset author. BLEU and chrF below measure agreement with those references, not translation quality for a Dinka or Nuer speaker, and no speaker has reviewed any output.
+**About the scores:** the Nuer and Dinka references in the corpus are very probably machine generated (not confirmed by the dataset author). BLEU and chrF below measure agreement with those references on a test split from the same corpus. They say nothing about quality for a Dinka or Nuer speaker or about real-world sentences, and no speaker has reviewed any output.
 
 ## Architecture Diagram
 
@@ -38,7 +38,9 @@ Fine-tuning NLLB-200 for English to Dinka and English to Nuer on SageMaker, with
 
 ## The Problem This Project Solves
 
-Dinka and Nuer are spoken by millions of people in South Sudan and are almost absent from translation tools. In 2026 a corpus of about 500,000 English-Nuer-Dinka sentence triples was published on Hugging Face. A corpus alone does not give a team a repeatable way to clean the data, keep a clean test set, fine-tune a model, decide with a measured rule whether the new model is better than the base model, register what was promoted, serve it, watch it and know what each request costs. This project builds that path on AWS and reports what it measured, including where the measurement stops meaning anything.
+Dinka and Nuer are spoken by millions of people in South Sudan. Both are low-resource languages and poorly served by translation models: NLLB-200 lists them, but its base model loops on 21.5% of the Dinka test sentences used here. In 2026 a corpus of about 500,000 English-Nuer-Dinka sentence triples was published on Hugging Face.
+
+A corpus is only the starting point. The data has to be cleaned and split without leakage, and a fine-tuned model has to beat the base model under a rule fixed in advance. Whatever passes then has to be registered, served, monitored and costed. This project builds that path on AWS.
 
 ## What This Actually Is
 
@@ -50,13 +52,12 @@ An MLOps pipeline around an existing open model and an existing public corpus:
 - **Serving and operations.** A real-time endpoint created for one session from the registry version, data capture, a CloudWatch dashboard and alarms, drift signals (input length, output/input length ratio) and an estimated cost per request with idle time stated separately.
 - **Widget.** A local React page with the live translation, the stored before and after results, the running cost estimate and the attribution banner.
 
-What was not built or not claimed:
+Out of scope:
 
-- No production translation system and no public API. The endpoint lived 35 minutes.
-- No human evaluation. The references are very probably machine generated (Dinka loops in 7.3% of the raw rows, see [proof/02-dataset-facts.txt](proof/02-dataset-facts.txt)), so the scores measure how closely the model reproduces that generator.
-- No result outside the corpus. The test split comes from the same corpus as the training data: the gains are in-distribution and do not generalize to real-world sentences, other domains or human translations.
-- No training on the full split. One pass over all 453,106 rows was estimated at about 9 hours on one T4, outside the cost cap.
-- No auto-scaling, no Model Monitor schedule, no SageMaker Studio.
+- A production translation system or a public API. The endpoint lived 35 minutes.
+- Human evaluation. See the note at the top and [proof/02-dataset-facts.txt](proof/02-dataset-facts.txt).
+- Training on the full split. One pass over all 453,106 rows (906,212 examples) would take about 10.6 hours and 7.77 USD at run 2's billed rate (96,000 examples in 4,024 s). That is under the 20 USD cap, but it puts about 39% of the cap on a single job, and resuming from checkpoints had not been tested. The job limit stayed at 2 hours (ADR-019).
+- Auto-scaling, a Model Monitor schedule, SageMaker Studio.
 
 ## Tech Stack
 
@@ -78,7 +79,7 @@ Start 2026-10-18 16:47 UTC. Times are wall clock and include waiting for approva
 
 1. **Preflight.** Tool versions, AWS identity, Docker, Hugging Face reachability, the dataset card and its license, NLLB-200 language coverage (dik_Latn and nus_Latn are both in the list), SageMaker quotas and prices from the AWS Price List API. The dataset license turned out to be CC BY-NC 4.0, not MIT; work stopped until that was accepted.
 2. **Repository and backend.** Git identity, ignore rules, a pre-push hook that blocks account IDs, ARNs, keys, tokens, weights and dataset files (tested on 15 cases), a 25 USD monthly budget created before any other resource, the state bucket, the public repository, and a processing GPU quota request.
-3. **Data preparation, offline.** Download, inspection, personal data scan, the finding that the targets are very probably machine translated, the cleaning rules, the split and the leakage check, all with tests.
+3. **Data preparation, offline.** Download, inspection, personal data scan, the loop analysis of the targets, the cleaning rules, the split and the leakage check, all with tests.
 4. **Data stack.** S3, the Glue job, the catalog table, the Athena workgroup and its named queries; one Glue run and the five Athena checks.
 5. **Training and evaluation code, offline.** Training script, serving handlers and evaluation, tested inside the real training image with a tiny model; a CPU check of the base model on 10 test sentences.
 6. **Smoke run and baseline.** A 30-step training job, then the base model evaluated on the full test split.
@@ -88,7 +89,7 @@ Start 2026-10-18 16:47 UTC. Times are wall clock and include waiting for approva
 
 | Part | Time (UTC) | Duration | Where the time went |
 | --- | --- | --- | --- |
-| Preflight | 10-18 16:47 to 16:52 | 4 min | checks |
+| Preflight | 10-18 16:47 to 16:52 | 5 min | checks |
 | Waiting for the license decision | 16:52 to 17:54 | 62 min | waiting |
 | Repository, hook, budget, backend | 17:54 to 18:13 | 19 min | including the apply approval |
 | Data preparation | 18:13 to 19:37 | 84 min | including Hugging Face token and gated access problems |
@@ -104,9 +105,9 @@ Start 2026-10-18 16:47 UTC. Times are wall clock and include waiting for approva
 
 ## Real Problems Hit and Fixed
 
-- **The license was not the one expected.** The plan assumed MIT; the dataset card says CC BY-NC 4.0, and NLLB-200 is CC BY-NC 4.0 too. Work stopped before any resource was created. The result: nothing derived from the data or the weights is published, and the widget stays local.
-- **The corpus is very probably machine translated.** 7.3% of the Dinka targets repeat a word trigram 3 or more times while the English does not, a typical loop of a translation model. The corpus was kept (no other source of this size covers both languages) and 40,820 looping rows were removed by a cleaning rule. Every metric in this page carries the warning.
-- **The first full run ran out of GPU memory at step 1,700 of 3,000.** CUDA asked for 1.96 GiB on the 14.56 GiB T4: the float32 logits of one batch at the maximum length (16 sentences x 128 tokens x 256,206 vocabulary entries x 4 bytes), on top of 2.01 GiB of fragmented reserved memory. Batches are grouped by length, so the longest batch came late; the 30-step smoke run never reached one. About 0.42 USD (estimate, 2,039 billable seconds) was spent with no usable model. Fix: per-device batch 8 with 4 accumulation steps (same effective batch of 32), `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True`, and a 3-step worst-case run on the longest rows with every batch padded to 128 tokens before relaunching: peak 9.75 GiB reserved. Lesson: a short smoke run on random batches does not prove peak memory.
+- **The license was not the one expected.** The plan assumed MIT. The dataset card says CC BY-NC 4.0, and NLLB-200 is CC BY-NC 4.0 too. Work stopped before any resource was created, and nothing derived from the data or the weights is published.
+- **The corpus is very probably machine translated.** In the raw data, 7.3% of the Dinka targets (36,579 rows) and 1.3% of the Nuer targets (6,688 rows) repeat a word trigram 3 or more times while the English does not. That is a typical loop of a translation model. The corpus was kept, since no other source of this size covers both languages. A cleaning rule removed 40,820 rows in which the Nuer or the Dinka target looped.
+- **The first full run ran out of GPU memory at step 1,700 of 3,000.** CUDA asked for 1.96 GiB on the 14.56 GiB T4: the float32 logits of one batch at the maximum length (16 sentences x 128 tokens x 256,206 vocabulary entries x 4 bytes), on top of 2.01 GiB of fragmented reserved memory. Batches are grouped by length, so the longest batch came late; the 30-step smoke run never reached one. About 0.42 USD (estimate, 2,039 billable seconds) was spent with no usable model. Fix: per-device batch 8 with 4 accumulation steps (same effective batch of 32) and `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True`. Before relaunching, a 3-step run on the longest rows, with every batch padded to 128 tokens, peaked at 9.75 GiB reserved.
 - **The Register step failed twice after the gate passed.** First, the pipeline role was denied `sagemaker:CreateModelPackageGroup`: the step calls it even when the group exists. After that action was added (scoped to the group) and the step retried alone, `CreateModelPackage` rejected two metadata values that contained "," and ">". Both fixes are in `infra/ml`, with an offline test of the value pattern. No GPU time was spent on either failure. Version 1 was then registered with `scripts/register_model_version.py` from run 2's real outputs, so it is not linked to the execution in SageMaker lineage; the execution ID and job names are in its metadata.
 - **A processing job was rejected before it started.** `ContainerEntrypoint` is limited to 256 characters; the inline shell command was longer. The command moved to `evaluation/run_eval.sh` with `ContainerArguments`.
 - **Commands passed to the training image were mangled.** The Deep Learning Container entrypoint rewrote `sh -c "..."`; local test runs use `--entrypoint bash`.
@@ -116,7 +117,7 @@ Start 2026-10-18 16:47 UTC. Times are wall clock and include waiting for approva
 
 ## Proof It Works
 
-Cleaning removed 42,774 of 499,880 rows (8.6%); every rule and its count are in [docs/DATA_CLEANING.md](docs/DATA_CLEANING.md). The split has 453,106 training, 1,939 validation and 1,966 test rows, and no test row shares an English, Nuer or Dinka text, a number-masked English text or a near duplicate (word-trigram Jaccard 0.8 or more) with the training split.
+Cleaning removed 42,774 of 499,880 rows (8.6%); every rule and its count are in [docs/DATA_CLEANING.md](docs/DATA_CLEANING.md). The split has 453,106 training, 1,939 validation and 1,966 test rows. That is 457,011 rows, 95 fewer than the 457,106 kept: 34 test rows and 61 validation rows were near duplicates of training rows and were dropped, not moved to training. No test row shares an English, Nuer or Dinka text, a number-masked English text or a near duplicate (word-trigram Jaccard 0.8 or more) with the training split.
 
 ```bash
 python data_prep/prepare.py && python data_prep/leakage_check.py
@@ -141,7 +142,7 @@ Before and after fine-tuning, on the same 1,966 held-out test sentences per dire
 | English to Dinka | 10.25 | 35.51 | 31.79 | 58.90 | 21.5% | 5.7% |
 | English to Nuer | 17.07 | 48.34 | 40.72 | 68.37 | 10.7% | 1.3% |
 
-These are in-distribution results: the test split comes from the same corpus as the training data, and the references are very probably machine generated (not confirmed by the dataset author). The gains show that the model learned to reproduce that corpus; they do not show that it translates real-world sentences well, and they do not generalize to other domains or to human translations. No Dinka or Nuer speaker reviewed the outputs.
+These are in-distribution results. The test split comes from the same corpus as the training data, and its references are very probably machine generated (not confirmed by the dataset author). The gains mean the model got closer to that corpus. They do not carry over to real-world sentences, other domains or human translations, and no Dinka or Nuer speaker reviewed the outputs.
 
 ```bash
 python scripts/launch_evaluation.py --label base
@@ -180,7 +181,7 @@ Scenario 1, before and after: the widget shows the stored metrics and the 10 sam
 
 ![Before and After (Automated Capture)](proof/screenshots/auto-03-widget-before-after.png)
 
-Scenario 2, live translation: "Boil water before drinking." sent to the live endpoint returned "Tɔ̈ɔ̈u pïu ke këc dek." in Dinka. In the same session the Dinka output for the hand-washing sentence looped ("pïu ë pïu ë pïu") and the Nuer output for the boiling sentence kept the English word "Boil". These are demonstration outputs, not checked by a speaker, and not reliable translations for health information or any real use. Automated capture.
+Scenario 2, live translation: "Boil water before drinking." sent to the live endpoint returned "Tɔ̈ɔ̈u pïu ke këc dek." in Dinka. In the same session the Dinka output for the hand-washing sentence looped ("pïu ë pïu ë pïu") and the Nuer output for the boiling sentence kept the English word "Boil". They are demonstration outputs, not reliable translations. Automated capture.
 
 ```bash
 cd console && npm run dev    # then: node e2e/flow.mjs <screenshot-dir> live
@@ -206,7 +207,7 @@ The dashboard shows invocations and errors, model latency (values in millisecond
 
 ## Cost Discipline
 
-- Credits had expired before the first billable step, so everything was paid in real money against a self-imposed cap of 20 USD for the whole project. A 25 USD monthly budget (credits and refunds excluded, no notifications) was created before any other resource.
+- The project ran against a self-imposed cap of 20 USD. Costs on this page are list-price estimates; billing figures were not yet available when this was written. A 25 USD monthly budget (credits and refunds excluded, no notifications) was created before any other resource.
 - Every billable launch was preceded by an estimate from the AWS Price List API (ml.g4dn.xlarge 0.736 USD per hour for training, processing and hosting; Glue 0.44 USD per DPU-hour; Athena 5 USD per TB scanned) and a hard runtime limit on the job.
 - The smoke run measured the speed before the full run was sized; the full run used a 50,000-row subset and 3,000 steps with a 2-hour limit.
 - The endpoint existed only for the demo session, in its own stack, with a 2-hour hard limit; it lived 35 minutes.
@@ -286,7 +287,7 @@ The baseline metrics URI is a pipeline parameter (`BaselineMetricsUri`): it poin
 
 **Glue Python shell over a Glue Spark job.** 500,000 rows fit in one process; the same standard-library module runs locally, in tests and in Glue, and produced identical files.
 
-**A 50,000-row subset over the full training split.** Sized from the measured smoke speed to stay within the cost cap; one pass over all 453,106 rows was estimated at about 9 hours.
+**A 50,000-row subset over the full training split.** Sized from the measured smoke speed with a 2-hour job limit. One full pass would take about 10.6 hours and 7.77 USD at run 2's billed rate: under the cap, but about 39% of it on one job, with no tested checkpoint resume.
 
 **Fixed decoding (beam 4, 200 new tokens) over tuning it.** Chosen before the first evaluation; adjusting it after reading test outputs would be tuning on the test set.
 
