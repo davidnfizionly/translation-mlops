@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Translation MLOps - Architecture</title>
+<style>
+  :root { --ink: #232F3E; --region: #00A4A6; --grey: #7D8998; --analytics: #8C4FFF; --ml: #01A88D; --mgmt: #E7157B; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #fff; font-family: "Amazon Ember", "Helvetica Neue", Arial, sans-serif; color: var(--ink); }
+  #canvas { position: relative; width: 1800px; height: 1000px; background: #fff; overflow: hidden; }
+  .box { position: absolute; border: 2px solid; }
+  .box > .title { position: absolute; top: 6px; left: 10px; font-size: 19px; display: flex; align-items: center; gap: 8px; }
+  .box > .title img { width: 32px; height: 32px; }
+  .cloud { border-color: var(--ink); }
+  .cloud > .title { top: 0; left: 0; background: var(--ink); color: #fff; padding: 0 12px 0 0; height: 36px; }
+  .cloud > .title img { width: 36px; height: 36px; }
+  .region { border: 2px dashed var(--region); }
+  .region > .title { color: #00777A; }
+  .local { border-color: var(--grey); }
+  .data { border-color: var(--analytics); }
+  .data > .title { color: #6B2FD9; }
+  .pipeline { border-color: var(--ml); }
+  .pipeline > .title { color: #017A66; }
+  .serving { border: 2px dashed var(--ml); }
+  .serving > .title { color: #017A66; }
+  .monitoring { border-color: var(--mgmt); }
+  .monitoring > .title { color: #B0115C; }
+  .node { position: absolute; width: 180px; margin-left: -90px; text-align: center; }
+  .node img { width: 64px; height: 64px; display: block; margin: 0 auto; }
+  .node span { display: block; margin-top: 6px; font-size: 20px; line-height: 1.15; }
+  .step { position: absolute; width: 30px; height: 30px; border-radius: 50%; background: #000; color: #fff; font-size: 17px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  svg { position: absolute; inset: 0; pointer-events: none; }
+  svg polyline { fill: none; stroke: #000; stroke-width: 1.6; }
+</style>
+</head>
+<body>
+<div id="canvas">
+
+  <!-- Containers -->
+  <div class="box local" style="left:60px; top:180px; width:290px; height:720px;"><div class="title">Workstation</div></div>
+  <div class="box cloud" style="left:400px; top:25px; width:1370px; height:950px;"><div class="title"><img src="icons/group-aws-cloud.svg" alt="">AWS Cloud</div></div>
+  <div class="box region" style="left:425px; top:75px; width:1320px; height:875px;"><div class="title"><img src="icons/group-region.svg" alt="">us-east-1</div></div>
+  <div class="box data" style="left:450px; top:130px; width:560px; height:330px;"><div class="title">Data stage</div></div>
+  <div class="box pipeline" style="left:1040px; top:130px; width:680px; height:330px;"><div class="title"><img src="icons/sagemaker.svg" alt="">SageMaker Pipeline</div></div>
+  <div class="box serving" style="left:1240px; top:560px; width:250px; height:340px;"><div class="title">Endpoint stack</div></div>
+  <div class="box monitoring" style="left:1520px; top:560px; width:200px; height:340px;"><div class="title">Monitoring stack</div></div>
+
+  <!-- Nodes: top = center y - 32 -->
+  <div class="node" style="left:200px; top:48px; width:220px; margin-left:-110px;"><img src="icons/internet.svg" alt=""><span>Hugging Face Hub</span></div>
+  <div class="node" style="left:200px; top:228px;"><img src="icons/gear.svg" alt=""><span>Download script</span></div>
+  <div class="node" style="left:200px; top:668px;"><img src="icons/client.svg" alt=""><span>Widget and proxy</span></div>
+
+  <div class="node" style="left:540px; top:228px;"><img src="icons/s3.svg" alt=""><span>Data bucket</span></div>
+  <div class="node" style="left:730px; top:228px;"><img src="icons/glue.svg" alt=""><span>Glue job</span></div>
+  <div class="node" style="left:920px; top:228px;"><img src="icons/athena.svg" alt=""><span>Athena checks</span></div>
+
+  <div class="node" style="left:1130px; top:228px;"><img src="icons/sagemaker-train.svg" alt=""><span>Training job</span></div>
+  <div class="node" style="left:1300px; top:228px;"><img src="icons/sagemaker.svg" alt=""><span>Evaluation job</span></div>
+  <div class="node" style="left:1470px; top:228px;"><img src="icons/shield.svg" alt=""><span>chrF gate</span></div>
+  <div class="node" style="left:1640px; top:228px;"><img src="icons/sagemaker-model.svg" alt=""><span>Model Registry</span></div>
+
+  <div class="node" style="left:1130px; top:668px;"><img src="icons/s3.svg" alt=""><span>ML bucket</span></div>
+  <div class="node" style="left:1420px; top:668px;"><img src="icons/sagemaker.svg" alt=""><span>Endpoint</span></div>
+  <div class="node" style="left:1620px; top:668px;"><img src="icons/cloudwatch.svg" alt=""><span>CloudWatch</span></div>
+
+  <!-- Steps -->
+  <div class="step" style="left:132px; top:35px;">1</div>
+  <div class="step" style="left:132px; top:215px;">2</div>
+  <div class="step" style="left:662px; top:215px;">3</div>
+  <div class="step" style="left:852px; top:215px;">4</div>
+  <div class="step" style="left:1160px; top:198px;">5</div>
+  <div class="step" style="left:1232px; top:215px;">6</div>
+  <div class="step" style="left:1402px; top:215px;">7</div>
+  <div class="step" style="left:1352px; top:655px;">8</div>
+  <div class="step" style="left:132px; top:655px;">9</div>
+  <div class="step" style="left:1552px; top:655px;">10</div>
+
+  <svg width="1800" height="1000" viewBox="0 0 1800 1000">
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#000"/>
+      </marker>
+    </defs>
+    <!-- 1 gated dataset download; base model weights pulled by the training job -->
+    <polyline points="200,150 200,224" marker-end="url(#arrow)"/>
+    <polyline points="236,66 1025,66 1025,240 1094,240" marker-end="url(#arrow)"/>
+    <!-- 2 raw file uploaded to the data bucket -->
+    <polyline points="236,260 504,260" marker-end="url(#arrow)"/>
+    <!-- 3 Glue job reads the raw file and writes the cleaned, deduplicated splits -->
+    <polyline points="576,260 694,260" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+    <!-- 4 Athena queries the splits through the Glue Data Catalog -->
+    <polyline points="920,224 920,185 540,185 540,224" marker-end="url(#arrow)"/>
+    <!-- 5 train and valid splits into the training job; model artifact to the ML bucket -->
+    <polyline points="540,335 540,420 1055,420 1055,280 1094,280" marker-end="url(#arrow)"/>
+    <polyline points="1130,335 1130,664" marker-end="url(#arrow)"/>
+    <!-- 6 evaluation on the test split, then 7 the gate and the registry -->
+    <polyline points="1166,260 1264,260" marker-end="url(#arrow)"/>
+    <polyline points="1336,260 1434,260" marker-end="url(#arrow)"/>
+    <polyline points="1506,260 1604,260" marker-end="url(#arrow)"/>
+    <!-- 8 endpoint built from the approved version; request capture to the ML bucket -->
+    <polyline points="1640,335 1640,515 1420,515 1420,664" marker-end="url(#arrow)"/>
+    <polyline points="1384,700 1166,700" marker-end="url(#arrow)"/>
+    <!-- 9 widget proxy calls the endpoint with the CLI credentials -->
+    <polyline points="200,775 200,860 1420,860 1420,775" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+    <!-- 10 endpoint metrics and proxy drift and cost metrics to CloudWatch -->
+    <polyline points="1456,700 1584,700" marker-end="url(#arrow)"/>
+    <polyline points="236,700 330,700 330,925 1620,925 1620,775" marker-end="url(#arrow)"/>
+  </svg>
+</div>
+</body>
+</html>
