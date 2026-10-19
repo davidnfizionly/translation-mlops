@@ -55,3 +55,9 @@ Real problems, root causes and fixes, written as they occur.
 - What happened: `docker run <training image> sh -c "pip install ...; pytest"` printed the pip usage text and then "No module named pytest".
 - Root cause: the image entrypoint re-wraps the command, so the `sh -c` string was not passed as one argument.
 - Fix: `--entrypoint bash` with `-c`. The 8 training and evaluation tests then passed in the image (torch 2.8.0, transformers 4.56.2).
+
+## 2026-10-19 - Processing job rejected: entrypoint longer than 256 characters
+
+- What happened: `create_processing_job` returned a ValidationException; the `bash -c "<pip install && python run_eval.py ...>"` entrypoint string exceeded the 256-character limit of `ContainerEntrypoint` members. No job was created.
+- Root cause: the whole command line, including the pinned model revision, was passed as one entrypoint member.
+- Fix: a small `evaluation/run_eval.sh` is shipped with the code and used as the entrypoint; the model arguments go in `ContainerArguments`. The job then started on the first try.

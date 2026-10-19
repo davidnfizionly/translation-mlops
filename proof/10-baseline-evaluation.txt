@@ -1,0 +1,44 @@
+Baseline evaluation - 2026-10-19 (UTC)
+Command: python scripts/launch_evaluation.py --label base --max-runtime-seconds 2700
+Job: tm-eval-base-20261019-095652, SageMaker processing, ml.g4dn.xlarge (Tesla T4), status Completed
+Model: facebook/nllb-200-distilled-600M, revision f8d333a0 (CC BY-NC 4.0), not fine-tuned
+Test split: 1,966 rows (held out before any training), sha256 3359bffa...c5b, same file as the local split
+Decoding: beam 4, max 200 new tokens, max 256 source tokens, float16 (fixed before any evaluation)
+Dataset: English-Nuer-Dinka Parallel Corpus by Tajnaam (CC BY-NC 4.0).
+The references are very probably machine generated (not confirmed by the author):
+the scores measure agreement with them, not the real quality for a speaker.
+
+Direction            BLEU    chrF    Sentences  Generation time
+English to Dinka     10.25   31.79   1,966      461.6 s
+English to Nuer      17.07   40.72   1,966      464.1 s
+
+BLEU signature: nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1
+chrF signature: nrefs:1|case:mixed|eff:yes|nc:6|nw:0|space:no|version:2.5.1
+
+eng_Latn-dik_Latn: hypotheses with a looping trigram (3+ repeats, source not looping): 423 of 1966 (21.5%); empty: 0
+eng_Latn-nus_Latn: hypotheses with a looping trigram (3+ repeats, source not looping): 211 of 1966 (10.7%); empty: 0
+
+Timing: ProcessingStartTime 09:57:37, ProcessingEndTime 10:19:17 (1,300 s)
+Estimated cost: 1,300 / 3600 h x 0.736 USD/h = 0.266 USD (estimate from the start and end times)
+
+Sample outputs (first test row, and the first row whose output loops), per direction:
+
+[eng_Latn-dik_Latn] first row, row 161950
+  EN : Acharya Jayasena has written a commentary on Pravachanasara titled Tatparyavritti (i.e. the Purport).
+  REF: Acharya Jayasena acï wël gɔ̈t në biäk de Pravachanasara cɔl Tatparyavritti (cïmën de Luɔɔi de Luɔɔi).
+  HYP: Acharya Jayasena acï wɛ̈t cï gɔ̈t në Pravachanasara cɔl Tatparyavritti (cïmën de Purport) gɔ̈t.
+
+[eng_Latn-dik_Latn] looping, row 184758
+  EN : He also wrote a satirical novel dealing with the follies of academia and the peculiarities of Canadian and American identities; titled Lincoln's Briefs, it has been published by Canadian Scholars' Press.
+  REF: Acï athör gɔ̈t ëyadɛ̈ ye jam në käjuëc ke puɔ̈ɔ̈c ku jɔl ya käjuëc ke ciɛɛŋ de kɔc ke Canada ku jɔl ya kɔc ke America; gɔ̈t në rin ke Lincoln, acï gɔ̈t në kɔc cï puɔ̈c ke Canada.
+  HYP: Acï bɛ̈n gɔ̈t athöör cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ̈t ke cï gɔ
+
+[eng_Latn-nus_Latn] first row, row 161950
+  EN : Acharya Jayasena has written a commentary on Pravachanasara titled Tatparyavritti (i.e. the Purport).
+  REF: Acharya Jayathena cuɛ gɔ̱r kɛ kui̱ Prabachanathara mi̱ ca ci̱ötdɛ gɔ̱r i̱ Tatparyabi̱ri̱ti̱(c.d. min lotdɛ).
+  HYP: Acharya Jayasena cɛ gɔ̱a̱r ruac kɛ kui̱ Pravachanasara mi̱ cɔali̱ Tatparyavritti (c.d.
+
+[eng_Latn-nus_Latn] looping, row 313416
+  EN : In its first incarnation, Moore was one of the original 30 seats contested at the 1890 colonial election.
+  REF: Rɛy tukädɛ min nhiam, ɛn Moore ɛ jɛn ram kɛl kä nɛy tëë nhiam tëë ci̱ kɔamni̱ ti̱ 30 tëë caa kɔn kuëŋ rɛy kuëny ëë caa kɔn la̱t ɛ ji̱ kɔlɔnial kɛ ruɔ̱n 1890.
+  HYP: Rɛy gua̱a̱th ëë nhiam, Moore ɛ jɛn ram kɛl kä gua̱a̱th ëë nhiam mi̱ ci̱ di̱i̱t mi̱ ci̱ di̱i̱t mi̱ ci̱ di̱i̱t mi̱ ci̱ di̱i̱t mi̱ ci̱ di̱t ɛlɔ̱ŋ kɛ ruɔ̱n 1890.
