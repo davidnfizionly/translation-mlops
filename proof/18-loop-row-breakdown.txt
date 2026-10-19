@@ -1,0 +1,13 @@
+Looping-target rows: raw counts vs the target_loop cleaning rule - 2026-10-19 (UTC)
+Dataset: English-Nuer-Dinka Parallel Corpus by Tajnaam (CC BY-NC 4.0), revision 28db28e6, 499,880 rows
+Method: data_prep/corpus.py functions (max_trigram_repeat, normalize_text, removal_reason) on the local raw file;
+a target loops when one word trigram appears 3 or more times. Rules run in order; a row counts under its first rule.
+
+raw Dinka loops 36579 raw Nuer loops 6688 sum 43267 both 1949 union 41318
+normalized rows with a looping target 41328 of which English also loops 460
+looping-target rows not counted under target_loop, by reason: {'english_length': 61, None: 446, 'length_ratio': 1}
+
+Reconciliation: 36,579 Dinka + 6,688 Nuer = 43,267 looping targets on 41,318 rows (1,949 rows loop in both).
+After normalisation 41,328 rows have a looping target. 61 were removed earlier by english_length, and 447 were
+not removed by target_loop because their English loops too (446 kept, 1 removed later by length_ratio).
+41,328 - 61 - 447 = 40,820 rows removed by target_loop, as in proof/04-cleaning.txt.
