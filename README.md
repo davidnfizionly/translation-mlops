@@ -25,6 +25,7 @@ Fine-tuning NLLB-200 for English to Dinka and English to Nuer on SageMaker, with
 
 ## Table of Contents
 
+- [Why I Built This](#why-i-built-this)
 - [The Problem This Project Solves](#the-problem-this-project-solves)
 - [What This Actually Is](#what-this-actually-is)
 - [Tech Stack](#tech-stack)
@@ -35,6 +36,14 @@ Fine-tuning NLLB-200 for English to Dinka and English to Nuer on SageMaker, with
 - [Running This Yourself](#running-this-yourself)
 - [Architecture Decisions](#architecture-decisions)
 - [Cleanup](#cleanup)
+
+## Why I Built This
+
+I am a cloud engineer. I like seeing technology make everyday life easier. I found this project on LinkedIn, in a post where a friend presented his work on Dinka and Nuer. I asked myself what I could build on AWS with his work as a base. My answer was the path around the model: clean the data, train, test, decide, register, serve, and track what it costs.
+
+The decisions were mine. When I saw that the dataset and the model are licensed for non-commercial use only, I paused the work, accepted the limits, and chose to publish nothing derived from them. I set a cost cap of 20 USD and approved every billable launch myself.
+
+Three things taught me something. A training run crashed at step 1,700 of 3,000, even though a short test run had passed. The score gains are large, but the references look machine generated, so I report what the numbers do not show. And idle time was 99% of the endpoint cost, so the endpoint lives only for one demo session.
 
 ## The Problem This Project Solves
 
