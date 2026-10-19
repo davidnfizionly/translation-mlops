@@ -25,7 +25,13 @@ IMAGE = "763104351884.dkr.ecr.{region}.amazonaws.com/huggingface-pytorch-trainin
 PROFILES = {
     # Validates the script and the container: few rows, few steps.
     "smoke": {"train_rows": 2000, "valid_rows": 100, "max_steps": 30, "eval_steps": 15, "save_steps": 15, "warmup_steps": 5},
+    # Worst case for GPU memory: longest rows, every batch padded to 128 tokens, full-run batch settings.
+    "stress": {"train_rows": 96, "valid_rows": 16, "max_steps": 3, "eval_steps": 3, "save_steps": 3, "warmup_steps": 0,
+               "per_device_batch_size": 8, "gradient_accumulation_steps": 4, "stress_max_length": "true"},
 }
+
+# Same memory option as the pipeline training step.
+ENVIRONMENT = {"PYTORCH_CUDA_ALLOC_CONF": "expandable_segments:True"}
 
 METRICS = [
     {"Name": "train:loss", "Regex": r"'loss': ([0-9.]+)"},
@@ -78,6 +84,7 @@ def main():
             "MetricDefinitions": METRICS,
         },
         "HyperParameters": hyper,
+        "Environment": ENVIRONMENT,
         "InputDataConfig": [
             {
                 "ChannelName": name,

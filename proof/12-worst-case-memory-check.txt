@@ -1,0 +1,15 @@
+Worst-case GPU memory check - 2026-10-19 (UTC)
+Command: python scripts/launch_training.py --profile stress --max-runtime-seconds 1800
+Job: tm-stress-20261019-114947, ml.g4dn.xlarge (Tesla T4), status Completed
+Purpose: prove that the full-run batch settings fit on the GPU in the worst case before relaunching.
+Settings: the 96 longest training rows (English + longer target, by characters), every batch padded to
+          128 source and 128 target tokens, per-device batch 8, 4 accumulation steps (effective 32),
+          fp16, Adafactor, PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True, 3 steps, one evaluation,
+          one checkpoint save.
+Result (training_summary.json from the job log):
+  peak GPU memory allocated 9.73 GiB, reserved 9.75 GiB, of 14.56 GiB usable (4.8 GiB margin)
+  train_runtime 15.1 s for 3 steps (padded worst case, not representative of normal speed)
+For comparison, run 1 (batch 16 x 2, no padding to maximum) failed with 11.42 GiB allocated plus a
+1.96 GiB request (proof/11-pipeline-run-1-failed.txt).
+BillableTimeInSeconds: 441; estimated cost 441 / 3600 h x 0.736 USD/h = 0.090 USD (estimate)
+After the run: 0 training jobs InProgress.

@@ -70,3 +70,27 @@ def test_serving_handler(tiny_model):
         inference.predict_fn({"inputs": "x", "parameters": {"tgt_lang": "fra_Latn"}}, loaded)
     with pytest.raises(ValueError):
         inference.predict_fn({"inputs": ["a"] * 17}, loaded)
+
+
+def test_stress_mode_uses_longest_rows_and_full_length_batches(tmp_path, tiny_model):
+    train_dir = write_split(tmp_path / "train", 30)
+    with open(train_dir / "split.jsonl", "a", encoding="utf-8") as f:
+        f.write(json.dumps({"row_id": 999, "english": "long " * 80, "nuer": "nuer " * 80, "din": "din " * 80}) + "\n")
+    valid_dir = write_split(tmp_path / "valid", 4, offset=100)
+    model_dir = tmp_path / "model"
+    train.main([
+        "--model_name", str(tiny_model), "--model_revision", "", "--stress_max_length", "true",
+        "--train_rows", "8", "--valid_rows", "4", "--max_steps", "1", "--warmup_steps", "0",
+        "--per_device_batch_size", "2", "--gradient_accumulation_steps", "1", "--max_source_length", "32", "--max_target_length", "32",
+        "--eval_steps", "1", "--save_steps", "1", "--fp16", "false",
+        "--train_dir", str(train_dir), "--valid_dir", str(valid_dir), "--model_dir", str(model_dir),
+        "--checkpoint_dir", str(tmp_path / "ckpt"), "--output_data_dir", str(tmp_path / "out"),
+    ])
+    summary = json.loads((model_dir / "training_summary.json").read_text())
+    assert summary["stress_max_length"] is True and summary["train_rows_used"] == 8
+    from transformers import AutoTokenizer, DataCollatorForSeq2Seq
+    tok = AutoTokenizer.from_pretrained(tiny_model)
+    rows = [{"row_id": 0, "english": "short", "din": "a", "nuer": "b"}]
+    items = train.encode(tok, rows, ["eng_Latn-dik_Latn"], 32, 32, seed=0).items
+    batch = DataCollatorForSeq2Seq(tok, pad_to_multiple_of=32)(items)
+    assert batch["input_ids"].shape[1] == 32 and batch["labels"].shape[1] == 32

@@ -112,6 +112,8 @@ def parse_args(argv=None):
     p.add_argument("--save_steps", type=int, default=250)
     p.add_argument("--fp16", type=lambda s: s.lower() == "true", default=torch.cuda.is_available())
     p.add_argument("--seed", type=int, default=13)
+    p.add_argument("--stress_max_length", type=lambda s: s.lower() == "true", default=False,
+                   help="memory check: longest training rows, every batch padded to the maximum length")
     p.add_argument("--train_dir", default=os.environ.get("SM_CHANNEL_TRAIN", "data/processed/train"))
     p.add_argument("--valid_dir", default=os.environ.get("SM_CHANNEL_VALID", "data/processed/valid"))
     p.add_argument("--model_dir", default=os.environ.get("SM_MODEL_DIR", "outputs/model"))
@@ -130,7 +132,11 @@ def main(argv=None):
 
     train_file, valid_file = find_jsonl(args.train_dir), find_jsonl(args.valid_dir)
     train_all = load_jsonl(train_file)
-    train_rows = deterministic_subset(train_all, args.train_rows, args.seed)
+    if args.stress_max_length:
+        longest = lambda r: len(r["english"]) + max(len(r["din"]), len(r["nuer"]))
+        train_rows = sorted(train_all, key=longest, reverse=True)[: args.train_rows]
+    else:
+        train_rows = deterministic_subset(train_all, args.train_rows, args.seed)
     valid_rows = deterministic_subset(load_jsonl(valid_file), args.valid_rows, args.seed)
     print(f"train rows used {len(train_rows)} of {len(train_all)}, valid rows {len(valid_rows)}, directions {directions}")
     del train_all
@@ -168,7 +174,11 @@ def main(argv=None):
         args=training_args,
         train_dataset=train_ds,
         eval_dataset=valid_ds,
-        data_collator=DataCollatorForSeq2Seq(tokenizer, model=model),
+        data_collator=DataCollatorForSeq2Seq(
+            tokenizer,
+            model=model,
+            pad_to_multiple_of=max(args.max_source_length, args.max_target_length) if args.stress_max_length else None,
+        ),
         processing_class=tokenizer,
     )
 
@@ -211,6 +221,12 @@ def main(argv=None):
         "eval_loss_after": eval_after["eval_loss"],
         "train_seconds": round(time.time() - start, 1),
         "device": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "cpu",
+        "per_device_batch_size": args.per_device_batch_size,
+        "gradient_accumulation_steps": args.gradient_accumulation_steps,
+        "stress_max_length": args.stress_max_length,
+        "peak_gpu_memory_allocated_gib": round(torch.cuda.max_memory_allocated() / 2**30, 2) if torch.cuda.is_available() else None,
+        "peak_gpu_memory_reserved_gib": round(torch.cuda.max_memory_reserved() / 2**30, 2) if torch.cuda.is_available() else None,
+        "gpu_total_memory_gib": round(torch.cuda.get_device_properties(0).total_memory / 2**30, 2) if torch.cuda.is_available() else None,
     }
     os.makedirs(args.output_data_dir, exist_ok=True)
     for target in (Path(args.model_dir) / "training_summary.json", Path(args.output_data_dir) / "training_summary.json"):
