@@ -1,0 +1,30 @@
+Model Registry version - 2026-10-19 (UTC)
+Group: translation-mlops-nllb-en-din-nus (tag Project=translation-mlops on the group)
+Registered 2026-10-19T13:43:55Z with: python scripts/register_model_version.py --execution-id lftys35r436m
+  (the pipeline Register step failed twice; ADR-020, docs/DEVLOG.md). Train and Evaluate were not re-run.
+Verification: aws sagemaker describe-model-package (bucket names masked):
+{
+    "status": "Completed",
+    "approval": "Approved",
+    "version": 1,
+    "group": "translation-mlops-nllb-en-din-nus",
+    "metrics": {
+        "ContentType": "application/json",
+        "S3Uri": "s3://<ml-bucket>/evaluation/pipeline/lftys35r436m/evaluation.json"
+    },
+    "meta": {
+        "base_model": "facebook/nllb-200-distilled-600M",
+        "base_model_revision": "f8d333a098d19b4fd9a8b18f94170487ad3f821d",
+        "dataset": "English-Nuer-Dinka Parallel Corpus by Tajnaam - CC BY-NC 4.0 - revision 28db28e6",
+        "evaluation_job": "pipelines-lftys35r436m-Evaluate-R26ArSTwD1",
+        "pipeline_execution_id": "lftys35r436m",
+        "promotion_rule": "fine-tuned chrF greater than baseline chrF in every direction",
+        "registered_by": "scripts/register_model_version.py - Register step failed in the pipeline",
+        "training_job": "pipelines-lftys35r436m-Train-IDhZcADfN7"
+    },
+    "model": "s3://<ml-bucket>/training/pipeline/pipelines-lftys35r436m-Train-IDhZcADfN7/output/model.tar.gz",
+    "image": "763104351884.dkr.ecr.us-east-1.amazonaws.com/huggingface-pytorch-inference:2.6.0-transformers4.51.3-gpu-py312-cu124-ubuntu22.04"
+}
+evaluation.json referenced by the version: present in S3 (996 bytes); contents in proof/13-pipeline-run-2.txt
+  (Dinka BLEU 35.51 chrF 58.90, Nuer BLEU 48.34 chrF 68.37, gate.promote 1, 1,966 test rows per direction).
+Versions in the group: 1. Cost of the registration: no compute (API calls only).

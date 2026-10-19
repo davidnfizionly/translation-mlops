@@ -85,3 +85,9 @@ Real problems, root causes and fixes, written as they occur.
 - What happened: after the IAM fix, RetryPipelineExecution re-ran only Register, which failed again: CreateModelPackage rejected CustomerMetadataProperties because two values did not match the API pattern `[\p{L}\p{Z}\p{N}_.:/=+\-@]*` (the dataset value contained commas, the promotion rule contained ">").
 - Root cause: the value pattern was not checked when the definition was written; the offline tests only checked step wiring.
 - Fix: commas replaced by " - " and ">" by "greater than" in pipeline.tf, plus an offline test of every metadata value against the pattern. Not applied yet: second failure of the same step, so no further retry without approval.
+
+## 2026-10-19 - CreateModelPackage refused tags on a version
+
+- What happened: the first call of scripts/register_model_version.py failed with "Tags are not supported in Model Package versions. Please add them to the Model Package Group."
+- Root cause: tags are only accepted on the model package group; the script added the Project tag to the version request.
+- Fix: the tag was removed from the request (the group already carries Project=translation-mlops from Terraform). The second call registered version 1, Approved.
