@@ -1,0 +1,55 @@
+Post-destroy check - us-east-1
+Listings run at 2026-10-20T16:33:47Z (UTC), after the destroys below.
+
+Destroyed on 2026-10-20 (UTC):
+  15:16:28-15:17:51  infra/monitoring: 3 resources (dashboard, 2 alarms)
+  15:17:59           Model Registry version 1 (delete-model-package; created outside Terraform)
+  16:07:33-16:07:50  ML bucket emptied (182 objects, 36.9 GB; versioning never enabled, 0 delete markers)
+  16:07:50-16:08:20  infra/ml: 15 resources (pipeline, model package group, 3 IAM roles and policies, ML bucket and its settings)
+  16:32:32-16:32:40  data bucket emptied (19 objects, 0.43 GB; versioning never enabled, 0 delete markers)
+  16:32:40-16:33:05  infra/data: 18 resources (Glue job, catalog database and table, Athena workgroup and 5 named queries, Glue IAM role, data bucket and its settings)
+  16:33:20-16:33:28  5 log groups created by Glue and SageMaker for this project's jobs and endpoint
+  (infra/endpoint was destroyed on 2026-10-19 15:11:20-15:11:51, proof/17.)
+Copied before deletion to a local Windows folder: the fine-tuned model of run 2 (2,290,339,526 bytes, same size
+as in S3), both evaluation outputs, the three splits (MD5 equal to the S3 ETags of proof/07) and the cleaning stats.
+
+Kept on purpose until the billing check: infra/backend (state bucket and the 25 USD budget).
+
+Terraform state, managed resources per stack:
+  backend: 9
+  data: 0
+  ml: 0
+  endpoint: 0
+  monitoring: 0
+
+SageMaker endpoints: 0
+SageMaker endpoint configs: 0
+SageMaker models: 0
+SageMaker model package groups: 0
+SageMaker pipelines: 0
+SageMaker training jobs InProgress: 0, processing jobs InProgress: 0
+  (finished job records stay in SageMaker; they cannot be deleted and do not bill)
+S3 buckets named translation-mlops-*: translation-mlops-tfstate-XXXX
+  (the remaining one is the Terraform state bucket, kept)
+ECR repositories: 0
+CloudWatch log groups with the project's names: 0
+Glue databases named translation_mlops: 0
+Glue jobs named translation-mlops-*: 0
+Athena workgroups: primary (primary is the account default)
+CloudWatch dashboards: 0
+CloudWatch alarms named translation-mlops-*: 0
+IAM roles named translation-mlops-*: 
+Resources tagged Project=translation-mlops (Resource Groups Tagging API), by type:
+      1   budgets budget
+      1   s3 translation-mlops-tfstate-
+      1   sagemaker action
+      2   sagemaker context
+      6   sagemaker experiment-trial-component
+      2   sagemaker processing-job
+      4   sagemaker training-job
+  budget = the 25 USD budget and s3 = the state bucket, both kept. The sagemaker entries are records that
+  SageMaker creates by itself and that do not bill: 6 trial components and 4 training-job and 2 processing-job
+  records for the finished jobs (job records cannot be deleted), plus lineage contexts for the deleted model
+  package group and endpoint and one endpoint action.
+Budgets named translation-mlops-*: translation-mlops-monthly (kept)
+Custom metrics in the TranslationMlops namespace receive no new data; CloudWatch keeps them up to 15 months and bills a custom metric only for the hours it receives data.

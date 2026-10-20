@@ -65,7 +65,7 @@ Out of scope:
 
 - A production translation system or a public API. The endpoint lived 35 minutes.
 - Human evaluation. See the note at the top and [proof/02-dataset-facts.txt](proof/02-dataset-facts.txt).
-- Training on the full split. One pass over all 453,106 rows (906,212 examples) would take about 10.6 hours and 7.77 USD at run 2's billed rate (96,000 examples in 4,024 s). That is under the 20 USD cap, but it puts about 39% of the cap on a single job, and resuming from checkpoints had not been tested. The job limit stayed at 2 hours (ADR-019).
+- Training on the full split. One pass over all 453,106 rows (906,212 examples) would take about 10.6 hours and 7.77 USD at run 2's billed rate (96,000 examples in 4,024 s). That is under the 20 USD cap, but it puts about 39% of the cap on a single job, and resuming from checkpoints had not been tested. The job limit stayed at 2 hours (architecture decision record ADR-019).
 - Auto-scaling, a Model Monitor schedule, SageMaker Studio.
 
 ## Tech Stack
@@ -84,8 +84,6 @@ Out of scope:
 
 ## The Build, in Order
 
-Start 2026-10-18 16:47 UTC. Times are wall clock and include waiting for approvals, Hugging Face access and job runs.
-
 1. **Preflight.** Tool versions, AWS identity, Docker, Hugging Face reachability, the dataset card and its license, NLLB-200 language coverage (dik_Latn and nus_Latn are both in the list), SageMaker quotas and prices from the AWS Price List API. The dataset license turned out to be CC BY-NC 4.0, not MIT; work stopped until that was accepted.
 2. **Repository and backend.** Git identity, ignore rules, a pre-push hook that blocks account IDs, ARNs, keys, tokens, weights and dataset files (tested on 15 cases), a 25 USD monthly budget created before any other resource, the state bucket, the public repository, and a processing GPU quota request.
 3. **Data preparation, offline.** Download, inspection, personal data scan, the loop analysis of the targets, the cleaning rules, the split and the leakage check, all with tests.
@@ -96,27 +94,11 @@ Start 2026-10-18 16:47 UTC. Times are wall clock and include waiting for approva
 8. **Endpoint, monitoring and widget.** Endpoint and monitoring stacks, the widget and proxy tested headless offline first, then a 35-minute endpoint session with the three scenarios, a headless run against the live endpoint, and the destroy.
 9. **Diagram and README.**
 
-| Part | Time (UTC) | Duration | Where the time went |
-| --- | --- | --- | --- |
-| Preflight | 10-18 16:47 to 16:52 | 5 min | checks |
-| Waiting for the license decision | 16:52 to 17:54 | 62 min | waiting |
-| Repository, hook, budget, backend | 17:54 to 18:13 | 19 min | including the apply approval |
-| Data preparation | 18:13 to 19:37 | 84 min | including Hugging Face token and gated access problems |
-| Data stack | 19:37 to 19:53 | 16 min | Glue run 8.5 min |
-| Training and evaluation code | 19:53 to 22:10 | 2 h 17 min | 53 min pulling the 13.6 GB training image, 21 min waiting for a capture |
-| Overnight pause | 22:10 to 10-19 09:41 | not counted | |
-| Smoke run and baseline | 09:41 to 10:21 | 40 min | jobs 9 and 22 min |
-| Pipeline | 10:21 to 13:45 | 3 h 24 min | run 1: 37 min lost to the OOM; run 2: 86 min of jobs; registry fixes 15 min |
-| Endpoint, monitoring, widget | 13:45 to 15:12 | 1 h 27 min | widget and stacks 45 min offline, endpoint up 35 min |
-| Diagram and README | 15:12 to 15:26 | 14 min | |
-
-**Total: 11 h 8 min of work** over two days (16:47 on 2026-10-18 to 15:26 on 2026-10-19, overnight pause excluded). About 3 hours of it was job runtime (Glue, training, evaluation, endpoint start-up), 62 minutes was waiting for the license decision and 53 minutes was pulling the training image.
-
 ## Real Problems Hit and Fixed
 
 - **The license was not the one expected.** The plan assumed MIT. The dataset card says CC BY-NC 4.0, and NLLB-200 is CC BY-NC 4.0 too. Work stopped before any resource was created, and nothing derived from the data or the weights is published.
 - **The corpus is very probably machine translated.** In the raw data, 7.3% of the Dinka targets (36,579 rows) and 1.3% of the Nuer targets (6,688 rows) repeat a word trigram 3 or more times while the English does not. That is a typical loop of a translation model. The corpus was kept, since no other source of this size covers both languages. A cleaning rule removed 40,820 rows in which the Nuer or the Dinka target looped; against the 43,267 looping targets, 1,949 rows loop in both languages, 10 more rows loop once the text is normalized, 61 were already removed by the English-length rule, and the rule spares 447 because their English loops too ([proof/18-loop-row-breakdown.txt](proof/18-loop-row-breakdown.txt)).
-- **The first full run ran out of GPU memory at step 1,700 of 3,000.** CUDA asked for 1.96 GiB on the 14.56 GiB T4: the float32 logits of one batch at the maximum length (16 sentences x 128 tokens x 256,206 vocabulary entries x 4 bytes), on top of 2.01 GiB of fragmented reserved memory. Batches are grouped by length, so the longest batch came late; the 30-step smoke run never reached one. About 0.42 USD (estimate, 2,039 billable seconds) was spent with no usable model. Fix: per-device batch 8 with 4 accumulation steps (same effective batch of 32) and `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True`. Before relaunching, a 3-step run on the longest rows, with every batch padded to 128 tokens, peaked at 9.75 GiB reserved. A short smoke run on random batches did not reveal the peak memory, because batches are grouped by length and the longest one came late.
+- **The first full run ran out of GPU memory at step 1,700 of 3,000.** CUDA asked for 1.96 GiB on the 14.56 GiB T4: the float32 logits of one batch at the maximum length (16 sentences x 128 tokens x 256,206 vocabulary entries x 4 bytes), on top of 2.01 GiB of fragmented reserved memory. About 0.42 USD (estimate, 2,039 billable seconds) was spent with no usable model. Fix: per-device batch 8 with 4 accumulation steps (same effective batch of 32) and `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True`. Before relaunching, a 3-step run on the longest rows, with every batch padded to 128 tokens, peaked at 9.75 GiB reserved. A short smoke run on random batches did not reveal the peak memory, because batches are grouped by length and the longest one came late.
 - **The Register step failed twice after the gate passed.** First, the pipeline role was denied `sagemaker:CreateModelPackageGroup`: the step calls it even when the group exists. After that action was added (scoped to the group) and the step retried alone, `CreateModelPackage` rejected two metadata values that contained "," and ">". Both fixes are in `infra/ml`, with an offline test of the value pattern. No GPU time was spent on either failure. Version 1 was then registered with `scripts/register_model_version.py` from run 2's real outputs, so it is not linked to the execution in SageMaker lineage; the execution ID and job names are in its metadata.
 - **A processing job was rejected before it started.** `ContainerEntrypoint` is limited to 256 characters; the inline shell command was longer. The command moved to `evaluation/run_eval.sh` with `ContainerArguments`.
 - **Commands passed to the training image were mangled.** The Deep Learning Container entrypoint rewrote `sh -c "..."`; local test runs use `--entrypoint bash`.
@@ -238,7 +220,7 @@ Estimated cost per step, from billed seconds or start and end times multiplied b
 | CloudWatch alarms, dashboard, custom metrics | hours | under 0.02 |
 | **Total** | | **about 2.37, plus under 0.02 for monitoring** |
 
-S3 storage adds about 0.17 USD per month while the buckets exist (0.43 GB of data, 6.87 GB of model artifacts), plus about 0.16 USD for 30 GB of training checkpoints until they expire 7 days after creation. About 21% of the estimated total (run 1 and the worst-case check) was spent on the memory failure. The Cost Explorer figure for these two days was not yet available when this was written (the data lags up to 24 hours), so no billed total is claimed here.
+S3 storage added about 0.17 USD per month while the buckets existed (0.43 GB of data, 6.87 GB of model artifacts), plus 30 GB of training checkpoints set to expire after 7 days; all of it was deleted on 2026-10-20, about one day after the checkpoints were written. About 21% of the estimated total (run 1 and the worst-case check) was spent on the memory failure. The Cost Explorer figure for these two days was not yet available when this was written (the data lags up to 24 hours), so no billed total is claimed here.
 
 ## Running This Yourself
 
@@ -316,11 +298,26 @@ All 25 decisions are in [docs/DECISIONS.md](docs/DECISIONS.md).
 
 ## Cleanup
 
-The endpoint stack was destroyed at the end of the demo session: 5 resources (endpoint, endpoint configuration, model, role and its policy) between 15:11:20 and 15:11:51 UTC on 2026-10-19. A check right after found no SageMaker endpoint, endpoint configuration or model in the region, the endpoint role gone, and no training or processing job running.
+Everything was destroyed in reverse dependency order, each step approved by hand:
+
+1. `infra/endpoint`, at the end of the demo session on 2026-10-19 (15:11:20 to 15:11:51 UTC): endpoint, endpoint configuration, model, role and its policy.
+2. `infra/monitoring` on 2026-10-20 (15:16 to 15:17 UTC): the dashboard and the two alarms.
+3. Model Registry version 1 (15:17:59 UTC), which was created outside Terraform.
+4. The ML bucket emptied (182 objects, 36.9 GB), then `infra/ml` (16:07 to 16:08 UTC): pipeline, model package group, IAM roles, bucket.
+5. The data bucket emptied (19 objects, 0.43 GB), then `infra/data` (16:32 to 16:33 UTC): Glue job, catalog database and table, Athena workgroup and named queries, Glue role, bucket.
+6. The five log groups that Glue and SageMaker created for this project's jobs and endpoint (16:33 UTC).
+
+Before step 4, the fine-tuned model, the evaluation outputs and the three splits were copied to local storage; they stay private under the licenses and are not in this repository.
+
+The check after the destroys found no SageMaker endpoint, endpoint configuration, model, model package group or pipeline, no project bucket other than the state bucket, no ECR repository, no project log group, Glue database or job, no project Athena workgroup, dashboard, alarm or IAM role. SageMaker keeps the records of finished jobs and some lineage entries; they cannot all be deleted and do not bill.
+
+The Terraform state bucket and the 25 USD budget (`infra/backend`) are still in place, kept until the billing figures are checked.
 
 ```bash
-terraform -chdir=infra/endpoint destroy -var state_bucket=<state bucket>
-aws sagemaker list-endpoints && aws sagemaker list-endpoint-configs && aws sagemaker list-models
+terraform -chdir=infra/monitoring destroy
+terraform -chdir=infra/ml destroy -var state_bucket=<state bucket>      # after emptying the ML bucket
+terraform -chdir=infra/data destroy                                      # after emptying the data bucket
+aws resourcegroupstaggingapi get-resources --tag-filters Key=Project,Values=translation-mlops
 ```
 
-Output: [proof/17-endpoint-session-report.txt](proof/17-endpoint-session-report.txt)
+Output: [proof/17-endpoint-session-report.txt](proof/17-endpoint-session-report.txt), [proof/19-post-destroy-check.txt](proof/19-post-destroy-check.txt)
